@@ -1,8 +1,9 @@
+import { formatBytes } from '../lib/utils';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { DayTasks } from '../types/plan';
 import type { AiTaskDraft } from '../lib/aiTaskDrafts';
 import { draftsFromAiJson, extractJsonObject } from '../lib/aiTaskDrafts';
-import { TEAM } from '../data/constants';
+import { TEAM, TEXT_PREVIEW_CHARS } from '../data/constants';
 import { getInsforgeClient } from '../lib/insforgeClient';
 
 export interface MessageAttachment {
@@ -39,38 +40,62 @@ export interface OpenClawPlanBridge {
   data: DayTasks[];
   weekLabel: string;
   weekStart: string;
-  addTasksFromAiDrafts: (drafts: AiTaskDraft[]) => void;
+  addTasksFromAiDrafts: (drafts: AiTaskDraft[]) => { added: number; skipped: number };
 }
 
 const PROXY_API = (import.meta as any).env?.VITE_OPENCLAW_PROXY || '';
+const GATEWAY_URL = (import.meta as any).env?.VITE_OPENCLAW_GATEWAY_URL || '';
 const HEALTH_INTERVAL_MS = 15_000;
-const NGROK_HEADERS: Record<string, string> = PROXY_API.includes('ngrok') ? { 'ngrok-skip-browser-warning': 'true' } : {};
-// In production (non-localhost), always use InsForge function to avoid CORS
+const NGROK_HEADERS: Record<string, string> = (PROXY_API.includes('ngrok') || GATEWAY_URL.includes('ngrok'))
+  ? { 'ngrok-skip-browser-warning': 'true' }
+  : {};
 const IS_LOCALHOST = typeof window !== 'undefined' && window.location.hostname === 'localhost';
-const USE_INSFORGE_FN = !PROXY_API || !IS_LOCALHOST;
+const USE_INSFORGE_FN = !PROXY_API && !GATEWAY_URL && IS_LOCALHOST;
 
-type ChatHistoryMsg = { role: 'system' | 'user' | 'assistant'; content: string };
+type ChatHistoryMsg = { role: 'system' | 'user' | 'assistant'; content: string | Array<{ type: string; text?: string; image_url?: { url: string } }> };
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function buildMessageContent(text: string, attachments?: MessageAttachment[]): string {
+function buildMessageContent(text: string, attachments?: MessageAttachment[]): ChatHistoryMsg['content'] {
   if (!attachments || attachments.length === 0) return text;
+
+  // Check if any image has a dataUrl → use multimodal content array
+  const imageAtts = attachments.filter((a) => a.mimeType.startsWith('image/') && a.dataUrl);
+
   const lines: string[] = [];
   if (text.trim()) lines.push(text.trim());
-  lines.push('\n[Ekli dosyalar]');
-  for (const a of attachments) {
-    lines.push(`• ${a.name} (${a.mimeType || 'bilinmeyen'}, ${formatBytes(a.size)})`);
-    if (a.textPreview) {
-      const preview = a.textPreview.length > 1500 ? a.textPreview.slice(0, 1500) + '\n…' : a.textPreview;
-      lines.push('```');
-      lines.push(preview);
-      lines.push('```');
+
+  // Non-image attachment metadata + text previews
+  const nonImageAtts = attachments.filter((a) => !(a.mimeType.startsWith('image/') && a.dataUrl));
+  if (nonImageAtts.length > 0) {
+    lines.push('\n[Ekli dosyalar]');
+    for (const a of nonImageAtts) {
+      lines.push(`• ${a.name} (${a.mimeType || 'bilinmeyen'}, ${formatBytes(a.size)})`);
+      if (a.textPreview) {
+        const preview = a.textPreview.length > TEXT_PREVIEW_CHARS ? a.textPreview.slice(0, TEXT_PREVIEW_CHARS) + '\n…' : a.textPreview;
+        lines.push('```');
+        lines.push(preview);
+        lines.push('```');
+      }
     }
   }
+
+  // If images exist, return OpenAI-compatible multimodal content array
+  if (imageAtts.length > 0) {
+    // Add image file names to text context
+    for (const a of imageAtts) {
+      lines.push(`• 📷 ${a.name} (${formatBytes(a.size)}) — aşağıda görsel olarak eklendi`);
+    }
+
+    const parts: Array<{ type: string; text?: string; image_url?: { url: string } }> = [];
+    const textPart = lines.join('\n');
+    if (textPart.trim()) {
+      parts.push({ type: 'text', text: textPart });
+    }
+    for (const img of imageAtts) {
+      parts.push({ type: 'image_url', image_url: { url: img.dataUrl! } });
+    }
+    return parts;
+  }
+
   return lines.join('\n');
 }
 
@@ -131,6 +156,11 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
           if (!client) { if (alive) setIsConnected(false); return; }
           const res = await client.functions.invoke('openclaw-proxy', { method: 'GET' });
           data = res.data;
+        } else if (GATEWAY_URL) {
+          const r = await fetch(`${GATEWAY_URL}/v1/models`, {
+            headers: { Authorization: `Bearer ${(import.meta as any).env?.VITE_OPENCLAW_TOKEN}`, ...NGROK_HEADERS },
+          });
+          data = { gateway: r.ok ? 'connected' : 'error', status: r.status };
         } else {
           const r = await fetch(`${PROXY_API}/api/status`, { headers: NGROK_HEADERS });
           data = await r.json();
@@ -228,8 +258,35 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
           const res = await client.functions.invoke('openclaw-proxy', {
             body: { messages: history },
           });
-          if (res.error) throw new Error(res.error.message || 'Function hatası');
+          if (res.error) {
+            const errMsg = typeof res.error === 'object' && res.error?.message
+              ? res.error.message
+              : typeof res.error === 'string'
+                ? res.error
+                : 'Function hatası';
+            throw new Error(errMsg);
+          }
           data = res.data;
+        } else if (GATEWAY_URL) {
+          const token = (import.meta as any).env?.VITE_OPENCLAW_TOKEN || '';
+          const model = (import.meta as any).env?.VITE_OPENCLAW_MODEL || 'openclaw';
+          const gwRes = await fetch(`${GATEWAY_URL}/v1/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+              ...NGROK_HEADERS,
+            },
+            body: JSON.stringify({ model, messages: history, stream: false }),
+            signal: controller.signal,
+          });
+          if (!gwRes.ok) {
+            const errText = await gwRes.text();
+            throw new Error(`Gateway ${gwRes.status}: ${errText.slice(0, 200)}`);
+          }
+          const gwData = await gwRes.json();
+          const reply = gwData?.choices?.[0]?.message?.content || '';
+          data = { reply };
         } else {
           const res = await fetch(`${PROXY_API}/api/message`, {
             method: 'POST',
@@ -271,7 +328,7 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
         setIsStreaming(false);
       }
     },
-    [appendDelta, finalizeAssistant, tryApplyTaskDraftsFromText],
+    [finalizeAssistant, tryApplyTaskDraftsFromText],
   );
 
   return { messages, sendMessage, stop, isConnected, isTyping, isStreaming };

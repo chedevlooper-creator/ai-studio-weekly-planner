@@ -1,0 +1,25 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "prompt": {
+      "instructions": [
+        "Use Modal component from ui/Modal with focus trap and proper animations"
+      ],
+      "outputFormat": "JSON { changes: string[] }",
+      "role": "React developer",
+      "task": "Refactor TaskEditModal to use the Modal UI primitive"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPJNTE1HFX86XFXYCHJX18WT/input.json",
+    "outputJsonPath": "tasks/01KPJNTE1HFX86XFXYCHJX18WT/output.json"
+  },
+  "kind": "agent",
+  "title": "Integrate Modal primitive into TaskEditModal",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJNTE1HFX86XFXYCHJX18WT",
+  "taskId": "integrate-modal",
+  "invocationKey": "ui-polish-cleanup:S000003:integrate-modal",
+  "stepId": "S000003",
+  "inputs": {}
+}

@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T11:20:01.627Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJQG38ZHZ4F3YC4AGEYNG5W",
+    "invocationKey": "perf-ux-techdebt-overhaul:S000009:build-verify",
+    "invocationHash": "7c237420e0bd3ef73780925d901c44f1475ce987a77dd26cb175b6306b586da0",
+    "stepId": "S000009",
+    "taskId": "build-verify",
+    "kind": "shell",
+    "label": "Build verification: final",
+    "taskDefRef": "tasks/01KPJQG38ZHZ4F3YC4AGEYNG5W/task.json"
+  },
+  "checksum": "3680147d4c26d16b9e1c9d91790536217db6e2658abd84f429a5450e0807e109"
+}

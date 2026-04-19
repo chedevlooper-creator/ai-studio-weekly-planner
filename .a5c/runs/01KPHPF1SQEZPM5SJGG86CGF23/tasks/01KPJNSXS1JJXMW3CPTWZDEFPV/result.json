@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJNSXS1JJXMW3CPTWZDEFPV",
+  "taskId": "fix-remaining-alerts",
+  "invocationKey": "ui-polish-cleanup:S000002:fix-remaining-alerts",
+  "status": "ok",
+  "result": {
+    "fixed": [
+      "window.alert in useWeeklyPlan.ts importFromFile already replaced with toast.error() pattern - App.tsx calls toast.error(r.error) on import failure"
+    ]
+  },
+  "startedAt": "2026-04-19T10:50:39.588Z",
+  "finishedAt": "2026-04-19T10:50:39.588Z",
+  "value": {
+    "fixed": [
+      "window.alert in useWeeklyPlan.ts importFromFile already replaced with toast.error() pattern - App.tsx calls toast.error(r.error) on import failure"
+    ]
+  }
+}

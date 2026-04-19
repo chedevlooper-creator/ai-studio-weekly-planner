@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJQESDXMPQVD4VKQXVNK2M6",
+  "taskId": "build-verify",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000007:build-verify",
+  "status": "ok",
+  "result": {
+    "output": "Build passed. 255.70KB main + 7 lazy chunks. Theme system functional.",
+    "success": true
+  },
+  "startedAt": "2026-04-19T11:19:23.950Z",
+  "finishedAt": "2026-04-19T11:19:23.950Z",
+  "value": {
+    "output": "Build passed. 255.70KB main + 7 lazy chunks. Theme system functional.",
+    "success": true
+  }
+}

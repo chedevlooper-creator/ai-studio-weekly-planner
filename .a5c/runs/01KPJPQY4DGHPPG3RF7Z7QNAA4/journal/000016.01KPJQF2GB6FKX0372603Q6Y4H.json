@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T11:19:28.011Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJQF2F7NGQ04Y0K8Q9Z1YQ9",
+    "invocationKey": "perf-ux-techdebt-overhaul:S000008:quality-review",
+    "invocationHash": "90298f08016396d0e5a53407e1b728849871feba4d1fcc89da972192290435c5",
+    "stepId": "S000008",
+    "taskId": "quality-review",
+    "kind": "agent",
+    "label": "Quality review and scoring",
+    "taskDefRef": "tasks/01KPJQF2F7NGQ04Y0K8Q9Z1YQ9/task.json"
+  },
+  "checksum": "b319bfbc04d5234607fc3b081d9b2e68270390187f830efbdf50b3b6eddee358"
+}

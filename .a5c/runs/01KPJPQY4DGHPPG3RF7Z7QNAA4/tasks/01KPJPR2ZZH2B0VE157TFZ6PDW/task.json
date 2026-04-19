@@ -1,0 +1,45 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "outputSchema": {
+      "required": [
+        "summary",
+        "performance",
+        "techDebt",
+        "ux"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "projectRoot": "C:/Users/isaha/Downloads/zip"
+      },
+      "instructions": [
+        "Read vite.config.ts, tsconfig.json, package.json, src/App.tsx, src/main.tsx",
+        "Scan src/components/ and src/hooks/ for patterns",
+        "PERFORMANCE: Check bundle size (npm run build), identify code-splitting opportunities, lazy loading candidates, heavy dependencies (lucide-react is 40MB in node_modules), missing React.memo/useMemo/useCallback",
+        "TECH DEBT: Check TypeScript strictness (no strict:true, no noUncheckedIndexedAccess, no strictNullChecks), missing error boundaries, any type usage, missing return types",
+        "UI/UX: Check if there is a theme system (dark/light), check animation consistency, check for missing loading states, skeleton screens usage",
+        "Produce a prioritized action plan for each dimension",
+        "Return JSON with: { summary: string, performance: { bundleSize: string, issues: string[], plan: string[] }, techDebt: { issues: string[], plan: string[] }, ux: { issues: string[], plan: string[] } }"
+      ],
+      "outputFormat": "JSON",
+      "role": "Senior full-stack engineer and code auditor",
+      "task": "Audit the React+Vite project at C:/Users/isaha/Downloads/zip across three dimensions: performance, technical debt, and UI/UX."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPJPR2ZZH2B0VE157TFZ6PDW/input.json",
+    "outputJsonPath": "tasks/01KPJPR2ZZH2B0VE157TFZ6PDW/output.json"
+  },
+  "kind": "agent",
+  "title": "Audit codebase for performance, tech debt, and UX gaps",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJPR2ZZH2B0VE157TFZ6PDW",
+  "taskId": "audit-codebase",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000001:audit-codebase",
+  "stepId": "S000001",
+  "inputs": {
+    "projectRoot": "C:/Users/isaha/Downloads/zip"
+  }
+}

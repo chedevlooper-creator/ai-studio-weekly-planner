@@ -2,21 +2,38 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Send, Bot, X, Sparkles, Loader2, Maximize2, Minimize2,
   Paperclip, FileText, Image as ImageIcon, FileJson, FileSpreadsheet,
-  File as FileIcon, Square, ArrowDown,
+  File as FileIcon, Square, ArrowDown, ClipboardList, CalendarDays, CheckCircle2, BarChart3,
 } from 'lucide-react';
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 import { useOpenClaw, type MessageAttachment } from '../../hooks/useOpenClaw';
-import { cn } from '../../lib/utils';
+import { FilePreviewModal } from './FilePreviewModal';
+import { cn, formatBytes, TEXTUAL_MIME } from '../../lib/utils';
+import { MAX_TASK_FILE_SIZE, MAX_IMAGE_DATAURL_SIZE, TOAST_AUTO_DISMISS_MS, TEXT_PREVIEW_CHARS } from '../../data/constants';
+import type { DayTasks } from '../../types/plan';
+import type { AiTaskDraft } from '../../lib/aiTaskDrafts';
+
+interface AIPlanActions {
+  data: DayTasks[];
+  weekLabel: string;
+  weekStart: string;
+  addTasksFromAiDrafts: (drafts: AiTaskDraft[]) => { added: number; skipped: number };
+}
 
 interface AIAssistantProps {
-  planActions: any;
+  planActions: AIPlanActions;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_FILES = 5;
-const TEXT_PREVIEW_CHARS = 4000;
-const TEXTUAL_MIME = /^(text\/|application\/(json|xml|csv|javascript|x-yaml|x-sh))/i;
 
 function iconFor(mime: string) {
   if (mime.startsWith('image/')) return ImageIcon;
@@ -26,15 +43,11 @@ function iconFor(mime: string) {
   return FileIcon;
 }
 
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+const formatSize = formatBytes;
 
 async function fileToAttachment(file: File): Promise<MessageAttachment> {
   const base: MessageAttachment = { name: file.name, size: file.size, mimeType: file.type || 'application/octet-stream' };
-  if (base.mimeType.startsWith('image/') && file.size <= 2 * 1024 * 1024) {
+  if (base.mimeType.startsWith('image/') && file.size <= MAX_IMAGE_DATAURL_SIZE) {
     base.dataUrl = await new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = () => rej(r.error); r.readAsDataURL(file); });
   }
   if (TEXTUAL_MIME.test(base.mimeType) || /\.(md|txt|csv|log|json|ya?ml|js|ts|tsx|html|css)$/i.test(file.name)) {
@@ -43,11 +56,11 @@ async function fileToAttachment(file: File): Promise<MessageAttachment> {
   return base;
 }
 
-const SUGGESTIONS = [
-  '📋 Bu haftanın özetini çıkar',
-  '➕ Salı\'ya toplantı ekle',
-  '✅ Tamamlanan görevleri listele',
-  '📊 Ekip performansını analiz et',
+const SUGGESTIONS: { text: string; Icon: React.ComponentType<{ className?: string }> }[] = [
+  { text: "Bu haftanın özetini çıkar", Icon: ClipboardList },
+  { text: "Salı'ya toplantı ekle", Icon: CalendarDays },
+  { text: 'Tamamlanan görevleri listele', Icon: CheckCircle2 },
+  { text: 'Ekip performansını analiz et', Icon: BarChart3 },
 ];
 
 export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProps) {
@@ -63,6 +76,7 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [previewAtt, setPreviewAtt] = useState<(MessageAttachment & { __chat?: true }) | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -113,21 +127,24 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
 
   useEffect(() => {
     if (!uploadError) return;
-    const t = setTimeout(() => setUploadError(null), 4000);
+    const t = setTimeout(() => setUploadError(null), TOAST_AUTO_DISMISS_MS);
     return () => clearTimeout(t);
   }, [uploadError]);
+
+  const pendingLenRef = useRef(pending.length);
+  pendingLenRef.current = pending.length;
 
   const addFiles = useCallback(async (fileList: FileList | File[]) => {
     const files = Array.from(fileList);
     if (files.length === 0) return;
     const next: MessageAttachment[] = [];
     for (const f of files) {
-      if (pending.length + next.length >= MAX_FILES) { setUploadError(`En fazla ${MAX_FILES} dosya.`); break; }
-      if (f.size > MAX_FILE_SIZE) { setUploadError(`"${f.name}" çok büyük.`); continue; }
+      if (pendingLenRef.current + next.length >= MAX_FILES) { setUploadError(`En fazla ${MAX_FILES} dosya.`); break; }
+      if (f.size > MAX_TASK_FILE_SIZE) { setUploadError(`"${f.name}" çok büyük.`); continue; }
       try { next.push(await fileToAttachment(f)); } catch { setUploadError(`"${f.name}" okunamadı.`); }
     }
     if (next.length > 0) setPending((prev) => [...prev, ...next].slice(0, MAX_FILES));
-  }, [pending.length]);
+  }, []);
 
   const handleFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) void addFiles(e.target.files);
@@ -147,9 +164,7 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
   };
 
   const sendSuggestion = (text: string) => {
-    // Remove emoji prefix
-    const clean = text.replace(/^[^\w\sÇçĞğİıÖöŞşÜü]+\s*/, '');
-    sendMessage(clean);
+    sendMessage(text);
   };
 
   const scrollToBottom = () => {
@@ -219,18 +234,18 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
             <h3 id="ai-assistant-title" className="text-sm font-bold text-white tracking-tight">AI Asistan</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className={cn('size-1.5 rounded-full', isConnected ? 'bg-emerald-400' : 'bg-rose-400')} />
-              <span className="text-[10px] text-neutral-500">{isConnected ? 'Çevrimiçi' : 'Bağlanıyor…'}</span>
+              <span className="text-[11px] text-zinc-400">{isConnected ? 'Çevrimiçi' : 'Bağlanıyor…'}</span>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-0.5">
           <button type="button" onClick={() => setIsExpanded(!isExpanded)}
-            className="hidden sm:flex p-2 text-neutral-500 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors"
+            className="hidden sm:flex p-2 text-zinc-400 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors"
             aria-label={isExpanded ? 'Küçült' : 'Genişlet'}>
             {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
           </button>
           <button type="button" onClick={() => { setIsExpanded(false); setIsOpen(false); }}
-            className="p-2 text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+            className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
             aria-label="Kapat">
             <X className="size-4" />
           </button>
@@ -243,26 +258,30 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
         {messages.length === 0 && (
           <div className="flex-1 flex flex-col items-center justify-center gap-5 py-8">
             <div className="flex size-14 items-center justify-center rounded-2xl bg-white/[0.04] border border-white/[0.06]">
-              <Bot className="size-7 text-neutral-500" />
+              <Bot className="size-7 text-zinc-500" />
             </div>
             <div className="text-center max-w-[260px]">
-              <p className="text-sm font-semibold text-white">Merhaba! 👋</p>
-              <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">
+              <p className="text-sm font-semibold text-white">Merhaba!</p>
+              <p className="text-xs text-zinc-500 mt-1.5 leading-relaxed">
                 Görevlerinizi yönetmek için bana yazın.
               </p>
             </div>
-            <div className="flex flex-wrap justify-center gap-2 max-w-[320px]">
-              {SUGGESTIONS.map((s, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => sendSuggestion(s)}
-                  disabled={!isConnected}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-[11px] font-medium text-neutral-300 transition-all hover:border-accent/30 hover:bg-accent/[0.06] hover:text-accent-light disabled:opacity-40"
-                >
-                  {s}
-                </button>
-              ))}
+            <div className="flex flex-col gap-2 max-w-[320px]">
+              {SUGGESTIONS.map((s, i) => {
+                const Icon = s.Icon;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => sendSuggestion(s.text)}
+                    disabled={!isConnected}
+                    className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.025] px-3.5 py-2.5 text-[11px] font-medium text-zinc-300 transition-all hover:border-accent/30 hover:bg-accent/[0.06] hover:text-accent-light disabled:opacity-40"
+                  >
+                    <Icon className="size-3.5 shrink-0 text-zinc-500" />
+                    {s.text}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -284,11 +303,11 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
                 'max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed',
                 isUser
                   ? 'bg-accent text-white rounded-br-lg'
-                  : 'bg-white/[0.05] border border-white/[0.06] text-neutral-200 rounded-bl-lg',
+                  : 'bg-white/[0.05] border border-white/[0.06] text-zinc-200 rounded-bl-lg',
               )}>
                 {msg.text && (
                   <div className="whitespace-pre-wrap break-words">
-                    {msg.text}
+                    <span dangerouslySetInnerHTML={{ __html: escapeHtml(msg.text) }} />
                     {!isUser && msg.streaming && (
                       <span className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[2px] bg-accent-light animate-pulse" />
                     )}
@@ -300,17 +319,38 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
                     {msg.attachments.map((att, i) => {
                       const Icon = iconFor(att.mimeType);
                       const isImage = att.mimeType.startsWith('image/') && att.dataUrl;
+                      const canPreview = isImage || att.textPreview || att.mimeType === 'application/pdf';
                       return isImage ? (
-                        <a key={i} href={att.dataUrl} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg border border-white/10">
-                          <img src={att.dataUrl} alt={att.name} className="max-h-32 max-w-[200px] object-cover" />
-                        </a>
+                        <button key={i} type="button" onClick={() => setPreviewAtt({ ...att, __chat: true })} className="block overflow-hidden rounded-lg border border-white/10 cursor-pointer hover:border-accent/30 transition-colors">
+                          <img src={att.dataUrl} alt={att.name} className="max-h-48 max-w-[280px] object-cover" />
+                        </button>
                       ) : (
-                        <div key={i} className={cn('flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px]', isUser ? 'bg-white/15' : 'bg-white/[0.04] border border-white/[0.06]')}>
+                        <button key={i} type="button"
+                          onClick={canPreview ? () => setPreviewAtt({ ...att, __chat: true }) : undefined}
+                          className={cn(
+                            'flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px]',
+                            isUser ? 'bg-white/15' : 'bg-white/[0.04] border border-white/[0.06]',
+                            canPreview && 'cursor-pointer hover:border-accent/30 hover:bg-accent/[0.06] transition-colors',
+                          )}>
                           <Icon className="size-3 opacity-70" />
                           <span className="max-w-[140px] truncate">{att.name}</span>
-                        </div>
+                        </button>
                       );
                     })}
+                  </div>
+                )}
+
+                {/* Inline text preview for text-like attachments */}
+                {isUser && msg.attachments?.some((a) => a.textPreview) && (
+                  <div className="mt-2 space-y-1.5">
+                    {msg.attachments!.filter((a) => a.textPreview).map((att, i) => (
+                      <div key={i} className="rounded-lg bg-black/20 border border-white/[0.06] overflow-hidden">
+                        <div className="px-2 py-1 text-[10px] text-zinc-400 border-b border-white/[0.04] font-mono">{att.name}</div>
+                        <pre className="px-2 py-1.5 text-[10px] leading-relaxed text-zinc-300 font-mono overflow-x-auto max-h-24 whitespace-pre-wrap break-words">
+                          {att.textPreview!.length > 500 ? att.textPreview!.slice(0, 500) + '…' : att.textPreview}
+                        </pre>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -325,9 +365,9 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
               <Sparkles className="size-3.5 text-accent-light" />
             </div>
             <div className="bg-white/[0.04] border border-white/[0.06] rounded-2xl rounded-bl-lg px-4 py-3 flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-neutral-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="size-1.5 rounded-full bg-neutral-500 animate-bounce" style={{ animationDelay: '100ms' }} />
-              <span className="size-1.5 rounded-full bg-neutral-500 animate-bounce" style={{ animationDelay: '200ms' }} />
+              <span className="size-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="size-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: '100ms' }} />
+              <span className="size-1.5 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: '200ms' }} />
             </div>
           </div>
         )}
@@ -338,7 +378,7 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
       {/* Scroll to bottom */}
       {showScrollBtn && (
         <button type="button" onClick={scrollToBottom}
-          className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex size-8 items-center justify-center rounded-full bg-surface-2 border border-white/[0.08] text-neutral-400 shadow-lg hover:text-white transition-colors"
+          className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex size-8 items-center justify-center rounded-full bg-surface-2 border border-white/[0.08] text-zinc-400 shadow-lg hover:text-white transition-colors"
           aria-label="En alta git">
           <ArrowDown className="size-4" />
         </button>
@@ -360,13 +400,13 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
               const Icon = iconFor(att.mimeType);
               const isImage = att.mimeType.startsWith('image/') && att.dataUrl;
               return (
-                <div key={i} className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] pl-1 pr-1.5 py-1 text-[11px] text-neutral-300">
+                <div key={i} className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] pl-1 pr-1.5 py-1 text-[11px] text-zinc-300">
                   {isImage
                     ? <img src={att.dataUrl} alt="" className="size-6 rounded object-cover" />
                     : <span className="flex size-6 items-center justify-center rounded bg-white/[0.04]"><Icon className="size-3 text-accent-light" /></span>
                   }
                   <span className="max-w-[120px] truncate">{att.name}</span>
-                  <button type="button" onClick={() => removeAttachment(i)} className="size-4 flex items-center justify-center rounded text-neutral-500 hover:text-rose-400 transition-colors" aria-label="Kaldır">
+                  <button type="button" onClick={() => removeAttachment(i)} className="size-4 flex items-center justify-center rounded text-zinc-500 hover:text-rose-400 transition-colors" aria-label="Kaldır">
                     <X className="size-3" />
                   </button>
                 </div>
@@ -384,7 +424,7 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
 
           <button type="button" onClick={() => fileInputRef.current?.click()}
             disabled={!isConnected || pending.length >= MAX_FILES}
-            className="shrink-0 flex size-9 items-center justify-center rounded-lg text-neutral-500 hover:text-accent-light hover:bg-white/[0.06] disabled:opacity-30 transition-colors"
+            className="shrink-0 flex size-9 items-center justify-center rounded-lg text-zinc-500 hover:text-accent-light hover:bg-white/[0.06] disabled:opacity-30 transition-colors"
             aria-label="Dosya ekle">
             <Paperclip className="size-4" />
           </button>
@@ -398,7 +438,7 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
               onChange={(e) => setInputMessage(e.target.value)}
               disabled={!isConnected}
               placeholder={isConnected ? 'Mesaj yazın…' : 'Bağlanıyor…'}
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-2.5 px-3.5 text-sm text-white placeholder:text-neutral-600 outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/10 disabled:opacity-40 transition-all"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-2.5 px-3.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/10 disabled:opacity-40 transition-all"
               autoComplete="off"
               spellCheck={false}
             />
@@ -413,7 +453,7 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
           ) : (
             <button type="submit"
               disabled={!isConnected || (!inputMessage.trim() && pending.length === 0)}
-              className="shrink-0 flex size-9 items-center justify-center rounded-lg bg-accent text-white hover:bg-accent-light disabled:bg-white/[0.06] disabled:text-neutral-600 transition-colors"
+              className="shrink-0 flex size-9 items-center justify-center rounded-lg bg-accent text-white hover:bg-accent-light disabled:bg-white/[0.06] disabled:text-zinc-600 transition-colors"
               aria-label="Gönder">
               {isTyping ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
             </button>
@@ -423,6 +463,9 @@ export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProp
         {/* Safe area padding for mobile */}
         <div className="h-[env(safe-area-inset-bottom,0px)]" />
       </div>
+
+      {/* File preview modal */}
+      <FilePreviewModal attachment={previewAtt} onClose={() => setPreviewAtt(null)} />
     </div>
   );
 }

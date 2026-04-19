@@ -1,0 +1,179 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "outputSchema": {
+      "required": [
+        "summary",
+        "changes"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "audit": {
+          "performance": {
+            "bundleSize": "513.64 KB JS (150.48 KB gzip), 108.69 KB CSS (16.33 KB gzip) — single chunk",
+            "issues": [
+              "Single monolithic JS bundle (513KB) exceeds 500KB Vite warning threshold",
+              "No React.lazy or dynamic imports — everything loaded upfront",
+              "No React.memo on list-rendered components (TaskRow, DaySection, StatsCards)",
+              "No useMemo/useCallback for expensive computations or handlers in App.tsx",
+              "No manual chunks in vite.config.ts — vendor code mixed with app code",
+              "lucide-react is 40MB in node_modules (tree-shaking should help but verify)",
+              "@dnd-kit loaded even when drag is disabled (filter active or search active)"
+            ],
+            "plan": [
+              "Add React.lazy for AIAssistant, TeamPanel, RemindersPanel, TaskEditModal, FilePreviewModal",
+              "Add Suspense boundaries with Skeleton fallbacks",
+              "Configure vite manualChunks: react-vendor, dnd-kit, insforge-sdk, lucide-icons",
+              "Add React.memo to TaskRow, DaySection, StatsCards, StatsPills",
+              "Add useCallback for all event handlers passed as props in App.tsx",
+              "Add useMemo for filtered task data"
+            ]
+          },
+          "summary": "React+Vite weekly planner app with 46 TS/TSX files, 4373 LOC. Single 513KB JS bundle exceeds Vite warning. No code splitting, no lazy loading, no React.memo, no error boundaries, no TypeScript strict mode, no theme system.",
+          "techDebt": {
+            "issues": [
+              "tsconfig.json has NO strict:true — implicit any, unchecked nulls everywhere",
+              "No noUncheckedIndexedAccess — array/object access is unsafe",
+              "No error boundaries — any component crash takes down entire app",
+              "auth parameter typed as { user: any; signOut: () => Promise<void> } — any leaks",
+              "useWeeklyPlan hook has no explicit return type (1000+ line file)",
+              "useOpenClaw hook has no explicit return type",
+              "No React.StrictMode in main.tsx entry point"
+            ],
+            "plan": [
+              "Enable strict:true and noUncheckedIndexedAccess in tsconfig.json",
+              "Fix all resulting TypeScript errors",
+              "Create ErrorBoundary component in src/components/ui/",
+              "Wrap main sections and lazy-loaded components with ErrorBoundary",
+              "Add proper types replacing any usage",
+              "Add return types to exported hook functions"
+            ]
+          },
+          "ux": {
+            "issues": [
+              "No theme system — hardcoded dark theme only, no light mode option",
+              "No theme toggle in header",
+              "No micro-interactions on task cards (no hover scale, no press feedback)",
+              "No smooth expand/collapse animation for day sections (instant toggle)",
+              "EmptyState component exists but may not cover all empty scenarios",
+              "Skeleton component exists but not used as Suspense fallbacks"
+            ],
+            "plan": [
+              "Create useTheme hook with ThemeProvider (dark/light/system)",
+              "Add CSS variables for theme colors, use Tailwind dark: variants",
+              "Add theme toggle button in header with sun/moon icons",
+              "Add hover:scale-[1.01] on task cards, active:scale-[0.98] on buttons",
+              "Add smooth height animation for day section expand/collapse",
+              "Use Skeleton as Suspense fallback for lazy components"
+            ]
+          }
+        },
+        "projectRoot": "C:/Users/isaha/Downloads/zip"
+      },
+      "instructions": [
+        "1. CODE SPLITTING with React.lazy + Suspense:",
+        "   - Lazy load AIAssistant (heavy, not always visible)",
+        "   - Lazy load TeamPanel and RemindersPanel (sidebar panels)",
+        "   - Lazy load TaskEditModal (only shown on interaction)",
+        "   - Lazy load FilePreviewModal",
+        "   - Lazy load AuthGate login/signup forms",
+        "   - Add Suspense boundaries with Skeleton fallbacks from ui/Skeleton",
+        "2. VITE CONFIG - Add manual chunks in vite.config.ts:",
+        "   - Separate vendor chunk for react/react-dom",
+        "   - Separate chunk for @dnd-kit",
+        "   - Separate chunk for lucide-react icons",
+        "   - Separate chunk for @insforge/sdk",
+        "3. OPTIMIZE IMPORTS:",
+        "   - Check if lucide-react icons are tree-shakeable (they should be with named imports)",
+        "   - Ensure no barrel file re-exports pulling in unused code",
+        "4. REACT MEMOIZATION:",
+        "   - Add React.memo to TaskRow (rendered many times in lists)",
+        "   - Add React.memo to DaySection",
+        "   - Add React.memo to StatsCards, StatsPills",
+        "   - Add useMemo for filtered/sorted data in App.tsx",
+        "   - Add useCallback for event handlers passed as props",
+        "5. Make sure all imports are correct and build passes",
+        "Return JSON: { summary: string, changes: string[], bundleBefore: string, bundleAfter: string }"
+      ],
+      "outputFormat": "JSON",
+      "role": "React performance engineer",
+      "task": "Implement performance optimizations for the project at C:/Users/isaha/Downloads/zip. Current bundle is 513KB JS (gzip 150KB) in a single chunk."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPJPV2W5RGEHGJ0TWM2X4RM2/input.json",
+    "outputJsonPath": "tasks/01KPJPV2W5RGEHGJ0TWM2X4RM2/output.json"
+  },
+  "kind": "agent",
+  "title": "Implement performance optimizations: code splitting, lazy loading, bundle optimization",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJPV2W5RGEHGJ0TWM2X4RM2",
+  "taskId": "performance-optimization",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000002:performance-optimization",
+  "stepId": "S000002",
+  "inputs": {
+    "audit": {
+      "performance": {
+        "bundleSize": "513.64 KB JS (150.48 KB gzip), 108.69 KB CSS (16.33 KB gzip) — single chunk",
+        "issues": [
+          "Single monolithic JS bundle (513KB) exceeds 500KB Vite warning threshold",
+          "No React.lazy or dynamic imports — everything loaded upfront",
+          "No React.memo on list-rendered components (TaskRow, DaySection, StatsCards)",
+          "No useMemo/useCallback for expensive computations or handlers in App.tsx",
+          "No manual chunks in vite.config.ts — vendor code mixed with app code",
+          "lucide-react is 40MB in node_modules (tree-shaking should help but verify)",
+          "@dnd-kit loaded even when drag is disabled (filter active or search active)"
+        ],
+        "plan": [
+          "Add React.lazy for AIAssistant, TeamPanel, RemindersPanel, TaskEditModal, FilePreviewModal",
+          "Add Suspense boundaries with Skeleton fallbacks",
+          "Configure vite manualChunks: react-vendor, dnd-kit, insforge-sdk, lucide-icons",
+          "Add React.memo to TaskRow, DaySection, StatsCards, StatsPills",
+          "Add useCallback for all event handlers passed as props in App.tsx",
+          "Add useMemo for filtered task data"
+        ]
+      },
+      "summary": "React+Vite weekly planner app with 46 TS/TSX files, 4373 LOC. Single 513KB JS bundle exceeds Vite warning. No code splitting, no lazy loading, no React.memo, no error boundaries, no TypeScript strict mode, no theme system.",
+      "techDebt": {
+        "issues": [
+          "tsconfig.json has NO strict:true — implicit any, unchecked nulls everywhere",
+          "No noUncheckedIndexedAccess — array/object access is unsafe",
+          "No error boundaries — any component crash takes down entire app",
+          "auth parameter typed as { user: any; signOut: () => Promise<void> } — any leaks",
+          "useWeeklyPlan hook has no explicit return type (1000+ line file)",
+          "useOpenClaw hook has no explicit return type",
+          "No React.StrictMode in main.tsx entry point"
+        ],
+        "plan": [
+          "Enable strict:true and noUncheckedIndexedAccess in tsconfig.json",
+          "Fix all resulting TypeScript errors",
+          "Create ErrorBoundary component in src/components/ui/",
+          "Wrap main sections and lazy-loaded components with ErrorBoundary",
+          "Add proper types replacing any usage",
+          "Add return types to exported hook functions"
+        ]
+      },
+      "ux": {
+        "issues": [
+          "No theme system — hardcoded dark theme only, no light mode option",
+          "No theme toggle in header",
+          "No micro-interactions on task cards (no hover scale, no press feedback)",
+          "No smooth expand/collapse animation for day sections (instant toggle)",
+          "EmptyState component exists but may not cover all empty scenarios",
+          "Skeleton component exists but not used as Suspense fallbacks"
+        ],
+        "plan": [
+          "Create useTheme hook with ThemeProvider (dark/light/system)",
+          "Add CSS variables for theme colors, use Tailwind dark: variants",
+          "Add theme toggle button in header with sun/moon icons",
+          "Add hover:scale-[1.01] on task cards, active:scale-[0.98] on buttons",
+          "Add smooth height animation for day section expand/collapse",
+          "Use Skeleton as Suspense fallback for lazy components"
+        ]
+      }
+    },
+    "projectRoot": "C:/Users/isaha/Downloads/zip"
+  }
+}

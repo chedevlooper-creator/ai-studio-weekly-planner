@@ -1,0 +1,5 @@
+{
+  "fixed": [
+    "window.alert in useWeeklyPlan.ts importFromFile already replaced with toast.error() pattern - App.tsx calls toast.error(r.error) on import failure"
+  ]
+}

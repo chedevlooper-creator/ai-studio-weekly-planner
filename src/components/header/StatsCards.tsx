@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { CheckCircle2, Clock, Activity, TrendingUp } from 'lucide-react';
 
 export interface PlanStats {
@@ -47,9 +48,7 @@ function StatCard({ label, value, icon, cardClass, valueClass, labelClass, iconC
   );
 }
 
-import React from 'react';
-
-export function StatsCards({ stats }: { stats: PlanStats }) {
+export const StatsCards = memo(function StatsCards({ stats }: { stats: PlanStats }) {
   return (
     <div className="grid w-full grid-cols-2 gap-2.5 sm:grid-cols-4 lg:max-w-2xl">
       <StatCard
@@ -92,9 +91,9 @@ export function StatsCards({ stats }: { stats: PlanStats }) {
       />
     </div>
   );
-}
+});
 
-export function StatsPills({ stats }: { stats: PlanStats }) {
+const StatsPills = memo(function StatsPills({ stats }: { stats: PlanStats }) {
   return (
     <div className="flex items-center gap-2">
       <span className="inline-flex items-center gap-1 rounded-lg border border-accent/15 bg-accent/[0.07] px-2 py-1 text-[10px] font-bold tabular-nums text-accent-light">
@@ -110,4 +109,4 @@ export function StatsPills({ stats }: { stats: PlanStats }) {
       </span>
     </div>
   );
-}
+});

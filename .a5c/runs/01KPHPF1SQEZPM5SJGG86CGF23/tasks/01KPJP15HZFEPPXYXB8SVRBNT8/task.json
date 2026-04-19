@@ -1,0 +1,16 @@
+{
+  "command": "cd \"C:/Users/isaha/Downloads/zip\" && npx tsc --noEmit 2>&1; echo \"EXIT:$?\"",
+  "io": {
+    "outputJsonPath": "tasks/01KPJP15HZFEPPXYXB8SVRBNT8/output.json"
+  },
+  "kind": "shell",
+  "title": "Verify build: final",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJP15HZFEPPXYXB8SVRBNT8",
+  "taskId": "verify-build",
+  "invocationKey": "ui-polish-cleanup:S000006:verify-build",
+  "stepId": "S000006",
+  "inputs": {
+    "phase": "final"
+  }
+}

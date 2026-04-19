@@ -1,0 +1,16 @@
+{
+  "runId": "01KPJPQY4DGHPPG3RF7Z7QNAA4",
+  "request": "perf-ux-techdebt-overhaul",
+  "processId": "perf-ux-techdebt-overhaul",
+  "harness": "pi",
+  "entrypoint": {
+    "importPath": "../../processes/perf-ux-techdebt-overhaul.js",
+    "exportName": "process"
+  },
+  "processPath": "../../processes/perf-ux-techdebt-overhaul.js",
+  "layoutVersion": "2026.01-storage-preview",
+  "createdAt": "2026-04-19T11:06:49.903Z",
+  "prompt": "Performance optimization (code splitting, lazy loading, bundle opt), UI/UX improvements (dark/light theme, micro-interactions), and technical debt (TypeScript strict, error boundaries, memoization)",
+  "nonInteractive": true,
+  "completionProof": "2c90cc7a6c90b2764c9a87643527a8e2"
+}

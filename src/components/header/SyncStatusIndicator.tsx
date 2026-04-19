@@ -10,7 +10,7 @@ export function SyncStatusIndicator({ status, compact = false }: { status: SyncS
         {status === 'saved' && <><Cloud className="size-3 text-emerald-400" /><span className="text-emerald-400">✓</span></>}
         {status === 'error' && <><CloudOff className="size-3 text-rose-400" /><span className="text-rose-400">!</span></>}
         {status === 'local-only' && <><HardDrive className="size-3 text-amber-400" /><span className="text-amber-400/90">~</span></>}
-        {status === 'idle' && <Check className="size-3 text-neutral-600" />}
+        {status === 'idle' && <Check className="size-3 text-zinc-600" />}
       </div>
     );
   }
@@ -21,7 +21,7 @@ export function SyncStatusIndicator({ status, compact = false }: { status: SyncS
       {status === 'saved' && <><Cloud className="size-4 text-emerald-400" aria-hidden /><span className="font-medium text-emerald-300">Buluta Kaydedildi</span></>}
       {status === 'error' && <><CloudOff className="size-4 text-rose-400" aria-hidden /><span className="font-medium text-rose-300">Bağlantı Hatası</span></>}
       {status === 'local-only' && <><HardDrive className="size-4 text-amber-400" aria-hidden /><span className="font-medium text-amber-200/90">Yalnızca yerel (bulut yok)</span></>}
-      {status === 'idle' && <><Check className="size-4 text-neutral-500" aria-hidden /><span className="font-medium text-neutral-500">Senkronize Edildi</span></>}
+      {status === 'idle' && <><Check className="size-4 text-zinc-500" aria-hidden /><span className="font-medium text-zinc-500">Hazır</span></>}
     </div>
   );
 }

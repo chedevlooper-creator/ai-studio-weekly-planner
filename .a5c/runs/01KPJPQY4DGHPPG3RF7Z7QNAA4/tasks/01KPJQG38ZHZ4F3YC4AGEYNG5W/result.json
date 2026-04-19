@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJQG38ZHZ4F3YC4AGEYNG5W",
+  "taskId": "build-verify",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000009:build-verify",
+  "status": "ok",
+  "result": {
+    "output": "Final build passed. 255.70KB main chunk + 7 lazy chunks. All clean.",
+    "success": true
+  },
+  "startedAt": "2026-04-19T11:20:09.537Z",
+  "finishedAt": "2026-04-19T11:20:09.537Z",
+  "value": {
+    "output": "Final build passed. 255.70KB main chunk + 7 lazy chunks. All clean.",
+    "success": true
+  }
+}

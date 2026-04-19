@@ -4,9 +4,10 @@
  */
 
 import type React from 'react';
+import { memo, useMemo } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown, Plus, ClipboardList, Search } from 'lucide-react';
 import type { DayTasks, TaskAttachment } from '../../types/plan';
 import { taskVisible } from '../../lib/planFilters';
 import { cn } from '../../lib/utils';
@@ -39,7 +40,7 @@ function DayAppendDropZone({ dayIndex, disabled }: { dayIndex: number; disabled:
   );
 }
 
-export function DaySection({
+export const DaySection = memo(function DaySection({
   dayData,
   dayIndex,
   expanded,
@@ -47,11 +48,7 @@ export function DaySection({
   filter,
   searchQuery,
   dragEnabled,
-  editingNote: _editingNote,
   onToggleTaskStatus,
-  onUpdateTaskNotes: _onUpdateTaskNotes,
-  onEditingNoteClose: _onEditingNoteClose,
-  onStartEditNote: _onStartEditNote,
   onAddTask,
   onEditTask,
   onDeleteTask,
@@ -65,20 +62,16 @@ export function DaySection({
   filter: string;
   searchQuery: string;
   dragEnabled: boolean;
-  editingNote: { dayIndex: number; taskId: string } | null;
   onToggleTaskStatus: (taskId: string) => void;
-  onUpdateTaskNotes: (taskId: string, notes: string) => void;
-  onEditingNoteClose: () => void;
-  onStartEditNote: (taskId: string) => void;
   onAddTask: () => void;
   onEditTask: (taskId: string) => void;
   onDeleteTask?: (taskId: string) => void;
   onQuickAttachFiles: (taskId: string, files: FileList | File[]) => Promise<void>;
   onPreviewAttachment: (attachment: TaskAttachment) => void;
 }) {
-  const visibleTasks = dayData.tasks.filter((t) => taskVisible(t, filter, searchQuery));
-  const sortableIds = dayData.tasks.map((t) => t.id);
-  const completedCount = dayData.tasks.filter((t) => t.status === 'Tamamlanan').length;
+  const visibleTasks = useMemo(() => dayData.tasks.filter((t) => taskVisible(t, filter, searchQuery)), [dayData.tasks, filter, searchQuery]);
+  const sortableIds = useMemo(() => dayData.tasks.map((t) => t.id), [dayData.tasks]);
+  const completedCount = useMemo(() => dayData.tasks.filter((t) => t.status === 'Tamamlanan').length, [dayData.tasks]);
   const totalCount = dayData.tasks.length;
   const dayColor = DAY_COLORS[dayData.day] ?? { dot: 'bg-accent', accent: 'rgba(99,102,241,0.55)', text: 'text-accent-light' };
   const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -97,7 +90,7 @@ export function DaySection({
       <button
         type="button"
         onClick={onToggleExpand}
-        className="group flex w-full cursor-pointer items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-white/[0.025]"
+        className="group flex w-full cursor-pointer items-center justify-between min-h-[48px] px-3.5 py-3 text-left transition-colors hover:bg-white/[0.025] sm:px-4 sm:py-3.5"
         aria-expanded={expanded}
         aria-controls={panelId}
       >
@@ -107,7 +100,7 @@ export function DaySection({
             {dayData.day}
           </span>
           {totalCount > 0 && (
-            <span className={cn('rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums', dayColor.text, 'bg-white/[0.04]')}>
+            <span className={cn('rounded-md px-1.5 py-0.5 text-[11px] font-bold tabular-nums', dayColor.text, 'bg-white/[0.04]')}>
               {completedCount}/{totalCount}
             </span>
           )}
@@ -126,7 +119,7 @@ export function DaySection({
           <ChevronDown
             className={cn(
               'size-4 transition-transform duration-200',
-              expanded ? 'rotate-180 text-accent-light' : 'text-slate-600 group-hover:text-slate-400',
+              expanded ? 'rotate-180 text-accent-light' : 'text-zinc-500 group-hover:text-zinc-300',
             )}
           />
         </span>
@@ -145,7 +138,7 @@ export function DaySection({
             <div className="flex flex-col gap-1.5 mt-2.5">
               {visibleTasks.length === 0 && (
                 <EmptyState
-                  icon={totalCount === 0 ? '📋' : '🔍'}
+                  icon={totalCount === 0 ? <ClipboardList className="size-8 text-zinc-600" /> : <Search className="size-8 text-zinc-600" />}
                   title={totalCount === 0 ? 'Henüz görev yok.' : 'Sonuç bulunamadı.'}
                   description={totalCount === 0 ? 'Aşağıdan yeni görev ekleyin.' : undefined}
                 />
@@ -170,7 +163,7 @@ export function DaySection({
           <button
             type="button"
             onClick={onAddTask}
-            className="group mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/[0.08] px-3 py-3 text-[12px] font-semibold text-neutral-400 transition-all hover:border-accent/30 hover:bg-accent/[0.04] hover:text-accent-light sm:w-fit sm:justify-start sm:py-2"
+            className="group mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/[0.06] px-3 py-3 text-[12px] font-semibold text-zinc-400 transition-all hover:border-accent/30 hover:bg-accent/[0.04] hover:text-accent-light sm:w-fit sm:justify-start sm:py-2"
           >
             <Plus className="size-3.5 text-accent group-hover:rotate-90 transition-transform duration-200" />
             Görev Ekle
@@ -179,4 +172,4 @@ export function DaySection({
       )}
     </Card>
   );
-}
+});

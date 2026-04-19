@@ -1,0 +1,17 @@
+{
+  "command": "cd \"C:/Users/isaha/Downloads/zip\" && npm run build 2>&1; echo \"BUILD_EXIT:$?\"",
+  "io": {
+    "outputJsonPath": "tasks/01KPJQG38ZHZ4F3YC4AGEYNG5W/output.json"
+  },
+  "kind": "shell",
+  "title": "Build verification: final",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJQG38ZHZ4F3YC4AGEYNG5W",
+  "taskId": "build-verify",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000009:build-verify",
+  "stepId": "S000009",
+  "inputs": {
+    "phase": "final",
+    "projectRoot": "C:/Users/isaha/Downloads/zip"
+  }
+}

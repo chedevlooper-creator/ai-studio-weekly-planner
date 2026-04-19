@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, type ReactNode } from
 import { createPortal } from 'react-dom';
 import { X, CheckCircle2, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { TOAST_AUTO_DISMISS_MS } from '../../data/constants';
 
 interface Toast {
   id: string;
@@ -31,7 +32,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const addToast = useCallback((t: Omit<Toast, 'id'>) => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     setToasts((prev) => [...prev, { ...t, id }]);
-    setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), 4000);
+    setTimeout(() => setToasts((prev) => prev.filter((x) => x.id !== id)), TOAST_AUTO_DISMISS_MS);
   }, []);
 
   const dismiss = useCallback((id: string) => {

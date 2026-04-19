@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T11:11:40.024Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJQ0SEMD3N6SJ7Q58M8NK5N",
+    "invocationKey": "perf-ux-techdebt-overhaul:S000004:tech-debt-cleanup",
+    "invocationHash": "d16c20a03716117be1797e84fad7c75b24cb7ed0b2c1e0e081aa454ad7fba69a",
+    "stepId": "S000004",
+    "taskId": "tech-debt-cleanup",
+    "kind": "agent",
+    "label": "Fix technical debt: TypeScript strict mode, error boundaries, code quality",
+    "taskDefRef": "tasks/01KPJQ0SEMD3N6SJ7Q58M8NK5N/task.json"
+  },
+  "checksum": "996950df04bd9b0320888ddc603c82a52fa5fba4778e0178057c91bb7f8638e7"
+}

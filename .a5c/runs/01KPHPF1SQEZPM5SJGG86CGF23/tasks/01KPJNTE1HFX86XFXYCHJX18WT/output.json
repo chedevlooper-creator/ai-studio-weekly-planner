@@ -1,0 +1,8 @@
+{
+  "changes": [
+    "TaskEditModal already uses Modal primitive from ui/Modal with built-in focus trap, Escape close, backdrop blur",
+    "Uses variant='bottom-sheet' for mobile-optimized layout with pull indicator",
+    "Modal provides scaleIn/slideUp animations, body scroll lock, focus restoration on close",
+    "Integration is complete - no further changes needed"
+  ]
+}

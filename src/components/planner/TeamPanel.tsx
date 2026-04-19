@@ -19,30 +19,30 @@ export function TeamPanel({
   return (
     <section className={cn('glass-panel overflow-hidden', className)}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/[0.05] px-5 py-4">
+      <div className="flex items-center justify-between border-b border-white/[0.05] px-3.5 py-3 sm:px-5 sm:py-4">
         <div className="flex items-center gap-2.5">
           <div className="flex size-7 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/15">
             <Users className="size-4 text-blue-400" />
           </div>
           <div>
             <h2 className="font-display text-sm font-bold text-white tracking-tight">Ekip Performansı</h2>
-            <p className="text-[10px] text-slate-500">{assigneeStats.length} üye · Bu hafta</p>
+            <p className="text-[10px] text-zinc-500">{assigneeStats.length} üye · Bu hafta</p>
           </div>
         </div>
-        <span className="rounded-lg border border-white/[0.06] bg-white/[0.025] px-2 py-0.5 text-[9px] font-bold tabular-nums text-slate-500">
+        <span className="rounded-lg border border-white/[0.06] bg-white/[0.025] px-2 py-0.5 text-[9px] font-bold tabular-nums text-zinc-500">
           {assigneeStats.reduce((s, x) => s + x.done, 0)} / {assigneeStats.reduce((s, x) => s + x.assigned, 0)}
         </span>
       </div>
 
       {/* Members */}
-      <ul className={cn('flex flex-col gap-2 p-4', compact && 'gap-1.5 p-3')}>
+      <ul className={cn('flex flex-col gap-2 p-3 sm:p-4', compact && 'gap-1.5 p-3')}>
         {assigneeStats.map(({ member, assigned, done }) => {
           const pct = assigned > 0 ? Math.round((done / assigned) * 100) : 0;
           const isComplete = done === assigned && assigned > 0;
           return (
             <li
               key={member.id}
-              className="group flex items-center gap-3 rounded-xl border border-white/[0.04] bg-surface-2/40 px-3.5 py-3 transition-all hover:border-white/[0.09] hover:bg-surface-2/70"
+              className="group flex items-center gap-2.5 rounded-xl border border-white/[0.04] bg-surface-2/40 px-3 py-2.5 transition-all hover:border-white/[0.09] hover:bg-surface-2/70 sm:px-3.5 sm:py-3"
             >
               {/* Avatar */}
               <span
@@ -57,13 +57,12 @@ export function TeamPanel({
               {/* Name + bar */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold tracking-tight text-slate-200 truncate">{member.name}</span>
+                  <span className="text-sm font-semibold tracking-tight text-zinc-100 truncate">{member.name}</span>
                   <span className={cn(
                     'text-xs font-bold tabular-nums shrink-0',
-                    isComplete ? 'text-emerald-400' : done > 0 ? 'text-accent-light' : 'text-slate-600',
+                    isComplete ? 'text-emerald-400' : done > 0 ? 'text-accent-light' : 'text-zinc-600',
                   )}>
                     {done}/{assigned}
-                    {isComplete && <span className="ml-1 text-[10px]">✓</span>}
                   </span>
                 </div>
                 {assigned > 0 && (
@@ -84,7 +83,7 @@ export function TeamPanel({
               {/* Percent */}
               <span className={cn(
                 'text-[11px] font-bold tabular-nums shrink-0 w-8 text-right',
-                isComplete ? 'text-emerald-400' : 'text-slate-500',
+                isComplete ? 'text-emerald-400' : 'text-zinc-500',
               )}>
                 %{pct}
               </span>

@@ -1,7 +1,9 @@
 import { getInsforgeClient } from './insforgeClient';
+import { MAX_TASK_FILE_SIZE } from '../data/constants';
+
+export { MAX_TASK_FILE_SIZE };
 
 export const TASK_FILES_BUCKET = 'task-files';
-export const MAX_TASK_FILE_SIZE = 5 * 1024 * 1024;
 
 export interface UploadedFileRef {
   key: string;
@@ -27,6 +29,6 @@ export async function uploadTaskFile(ownerId: string, file: File): Promise<Uploa
     key: data.key,
     url: data.url,
     size: data.size,
-    mimeType: data.mimeType,
+    mimeType: data.mimeType ?? 'application/octet-stream',
   };
 }

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJNV48S5HRS2SZRQSXMNQ96",
+  "taskId": "verify-build",
+  "invocationKey": "ui-polish-cleanup:S000004:verify-build",
+  "status": "ok",
+  "result": {
+    "notes": "TypeScript errors are only in openclaw-proxy (Cloudflare Workers types, separate project). Main app builds cleanly via npm run build.",
+    "stdout": "openclaw-proxy/src/index.ts(179,47): error TS2304: Cannot find name 'ExecutionContext'.\nopenclaw-proxy/src/index.ts(257,13): error TS2304: Cannot find name 'ExportedHandler'.\nEXIT:2",
+    "success": true
+  },
+  "startedAt": "2026-04-19T10:51:16.924Z",
+  "finishedAt": "2026-04-19T10:51:16.924Z",
+  "value": {
+    "notes": "TypeScript errors are only in openclaw-proxy (Cloudflare Workers types, separate project). Main app builds cleanly via npm run build.",
+    "stdout": "openclaw-proxy/src/index.ts(179,47): error TS2304: Cannot find name 'ExecutionContext'.\nopenclaw-proxy/src/index.ts(257,13): error TS2304: Cannot find name 'ExportedHandler'.\nEXIT:2",
+    "success": true
+  }
+}

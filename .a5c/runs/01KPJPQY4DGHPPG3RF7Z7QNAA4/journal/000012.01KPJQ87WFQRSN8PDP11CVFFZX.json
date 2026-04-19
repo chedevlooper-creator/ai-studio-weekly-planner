@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T11:15:44.143Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJQ87V8NN3NNKNT64H0CXA0",
+    "invocationKey": "perf-ux-techdebt-overhaul:S000006:ux-improvements",
+    "invocationHash": "cec88f1d7c4833fb400c4a0fdd9f9a73cf455d10df733d4efe46e1ab77d51c84",
+    "stepId": "S000006",
+    "taskId": "ux-improvements",
+    "kind": "agent",
+    "label": "UI/UX improvements: theme system, micro-interactions, loading states",
+    "taskDefRef": "tasks/01KPJQ87V8NN3NNKNT64H0CXA0/task.json"
+  },
+  "checksum": "6c9c7e767dbda430c8e4fa1ea70105f5e0b1e82ea96bbd5771b3df5ccd2fc773"
+}

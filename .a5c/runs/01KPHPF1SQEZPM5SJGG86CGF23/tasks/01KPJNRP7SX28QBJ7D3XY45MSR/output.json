@@ -1,0 +1,14 @@
+{
+  "removed": [
+    "src/components/header/PerformanceSection.tsx (already removed by prior run)",
+    "src/components/planner/BottomPanels.tsx (already removed by prior run)",
+    "src/components/planner/KeyboardShortcutsOverlay.tsx (already removed by prior run)",
+    "src/hooks/useFocusTrap.ts (already removed by prior run)",
+    "src/hooks/useSwipe.ts (already removed by prior run)"
+  ],
+  "cleaned": [
+    "No remaining dead imports found - all references to deleted files were already cleaned",
+    "StatsCards and PlanStats are actively used in DesktopHeader, MobileHeader, AppHeader - kept",
+    "Build passes successfully"
+  ]
+}

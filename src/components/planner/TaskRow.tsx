@@ -6,7 +6,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { memo, useState } from 'react';
-import { CheckCircle2, Circle, PlayCircle, GripVertical, Pencil, Paperclip, Loader2, AlertTriangle, Minus } from 'lucide-react';
+import { CheckCircle2, Circle, PlayCircle, GripVertical, Pencil, Paperclip, Loader2, AlertTriangle, Minus, FileText } from 'lucide-react';
 import type { Task, TaskAttachment } from '../../types/plan';
 import { cn } from '../../lib/utils';
 
@@ -27,7 +27,7 @@ const STATUS_CONFIG = {
   },
   'Bekliyor': {
     icon: Circle,
-    iconClass: 'text-slate-600 group-hover/row:text-slate-400',
+    iconClass: 'text-zinc-600 group-hover/row:text-zinc-400',
     badgeClass: 'badge-status-waiting',
     label: 'Bekliyor',
     rowClass: '',
@@ -81,10 +81,11 @@ export const TaskRow = memo(function TaskRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group/row relative flex items-start gap-3 rounded-xl border bg-surface-2/40 px-3.5 py-3 sm:px-4',
+        'group/row relative flex items-start gap-3 rounded-xl border bg-surface-2/40 px-3 py-2.5 sm:px-4 sm:py-3',
         'border-white/[0.05] transition-all duration-200',
-        'hover:border-white/[0.1] hover:bg-surface-2/70 hover:shadow-[0_2px_12px_rgba(0,0,0,0.35)]',
-        isDragging && 'z-50 scale-[1.025] border-accent/35 bg-accent/[0.07] shadow-[0_8px_32px_rgba(99,102,241,0.2)]',
+        'hover:border-white/[0.1] hover:bg-surface-2/70 hover:shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:scale-[1.008]',
+        'active:scale-[0.995]',
+        isDragging && 'z-50 scale-[1.025] border-accent/35 bg-accent/[0.07] shadow-[0_8px_32px_rgba(16,185,129,0.15)]',
         statusCfg.rowClass,
       )}
     >
@@ -99,7 +100,7 @@ export const TaskRow = memo(function TaskRow({
       {dragEnabled && (
         <button
           type="button"
-          className="no-print mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-slate-700 cursor-grab touch-none select-none hover:bg-white/[0.05] hover:text-slate-400 active:cursor-grabbing sm:size-8 sm:rounded-lg"
+          className="no-print mt-0.5 inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl text-zinc-700 cursor-grab touch-none select-none hover:bg-white/[0.05] hover:text-zinc-400 active:cursor-grabbing sm:min-h-[32px] sm:min-w-[32px] sm:rounded-lg"
           aria-label="Sürükle"
           {...attributes}
           {...listeners}
@@ -112,7 +113,7 @@ export const TaskRow = memo(function TaskRow({
       <button
         type="button"
         onClick={onToggleStatus}
-        className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/[0.05] hover:scale-105 active:scale-95 sm:size-8 sm:rounded-lg"
+        className="mt-0.5 inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/[0.05] hover:scale-105 active:scale-95 sm:min-h-[32px] sm:min-w-[32px] sm:rounded-lg sm:active:scale-100"
         aria-label={isCompleted ? `${task.title} görevini bekliyor durumuna al` : task.status === 'Devam Eden' ? `${task.title} görevini tamamla` : `${task.title} görevini başlat`}
       >
         <StatusIcon className={cn('size-[18px]', statusCfg.iconClass)} />
@@ -123,7 +124,7 @@ export const TaskRow = memo(function TaskRow({
         {/* Title */}
         <p className={cn(
           'text-sm font-medium leading-snug tracking-tight',
-          isCompleted ? 'text-slate-500 line-through decoration-slate-600' : 'text-slate-100',
+          isCompleted ? 'text-zinc-400 line-through decoration-zinc-500' : 'text-zinc-100',
         )}>
           {task.title}
         </p>
@@ -150,7 +151,7 @@ export const TaskRow = memo(function TaskRow({
               </span>
             ))}
             {task.assignees.length > 3 && (
-              <span className="flex size-4 items-center justify-center rounded-full border border-surface-1 bg-surface-3 text-[7px] font-bold text-slate-400">
+              <span className="flex size-4 items-center justify-center rounded-full border border-surface-1 bg-surface-3 text-[7px] font-bold text-zinc-400">
                 +{task.assignees.length - 3}
               </span>
             )}
@@ -158,14 +159,14 @@ export const TaskRow = memo(function TaskRow({
 
           {/* Notes indicator */}
           {task.notes && (
-            <span className="text-[10px] text-slate-600" title={task.notes}>📝</span>
+            <span className="text-[10px] text-zinc-600" title={task.notes}><FileText className="size-2.5" /></span>
           )}
 
           {/* Attachment pill */}
           {task.attachments.length > 0 && (
             <button
               type="button"
-              onClick={() => onPreviewAttachment(task.attachments[0])}
+              onClick={() => { const att = task.attachments[0]; if (att) onPreviewAttachment(att); }}
               className="inline-flex items-center gap-0.5 rounded border border-accent/15 bg-accent/[0.07] px-1.5 py-0.5 text-[10px] text-accent-light hover:bg-accent/[0.12] transition-colors"
               aria-label={`${task.title} görevinin eklerini önizle`}
             >
@@ -177,8 +178,8 @@ export const TaskRow = memo(function TaskRow({
       </div>
 
       {/* Action buttons */}
-      <div className="no-print mt-0.5 flex shrink-0 items-center gap-1 opacity-100 transition-opacity sm:gap-0.5 sm:opacity-0 group-hover/row:opacity-100">
-        <label className="inline-flex size-9 cursor-pointer items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-white/[0.07] hover:text-slate-200 sm:size-8 sm:rounded-lg">
+      <div className="no-print mt-0.5 flex shrink-0 items-center gap-1.5 opacity-100 sm:gap-0.5 sm:opacity-0 sm:group-hover/row:opacity-100">
+        <label className="inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-xl text-zinc-600 transition-colors hover:bg-white/[0.07] hover:text-zinc-200 active:scale-95 sm:min-h-[32px] sm:min-w-[32px] sm:rounded-lg sm:active:scale-100">
           {isUploading
             ? <Loader2 className="size-3.5 animate-spin text-accent-light" />
             : <Paperclip className="size-3.5" />
@@ -200,7 +201,7 @@ export const TaskRow = memo(function TaskRow({
         <button
           type="button"
           onClick={onEditTask}
-          className="inline-flex size-9 items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-white/[0.07] hover:text-slate-200 sm:size-8 sm:rounded-lg"
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-zinc-600 transition-colors hover:bg-white/[0.07] hover:text-zinc-200 active:scale-95 sm:min-h-[32px] sm:min-w-[32px] sm:rounded-lg sm:active:scale-100"
           aria-label={`${task.title} görevini düzenle`}
         >
           <Pencil className="size-3.5" />

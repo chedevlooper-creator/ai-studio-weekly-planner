@@ -84,7 +84,6 @@ export function useWeeklyPlan(userId: string | null) {
   const [preparerName, setPreparerName] = useState(init.preparer);
   const [weekStart, setWeekStart] = useState(init.weekStart);
   const [reminders, setReminders] = useState<string[]>(init.reminders);
-  const [editingNote, setEditingNote] = useState<{ dayIndex: number; taskId: string } | null>(null);
   const [taskModal, setTaskModal] = useState<TaskModalState>(null);
   const [remoteBootstrapped, setRemoteBootstrapped] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'saving' | 'saved' | 'error' | 'local-only'>('idle');
@@ -152,9 +151,6 @@ export function useWeeklyPlan(userId: string | null) {
         setSyncStatus(ok ? 'saved' : 'error');
         if (ok) {
           realtimeRef.current?.publish(snapshot);
-          // Reset to idle after 2s to avoid permanent "saved" badge
-          const reset = window.setTimeout(() => setSyncStatus('idle'), 2000);
-          return () => window.clearTimeout(reset);
         }
       });
     }, 700);
@@ -218,14 +214,6 @@ export function useWeeklyPlan(userId: string | null) {
     );
   }, []);
 
-  const updateTaskNotes = useCallback((dayIndex: number, taskId: string, notes: string) => {
-    setData((prev) =>
-      prev.map((d, i) =>
-        i === dayIndex ? { ...d, tasks: d.tasks.map((t) => (t.id === taskId ? { ...t, notes } : t)) } : d
-      )
-    );
-  }, []);
-
   const deleteTask = useCallback((dayIndex: number, taskId: string) => {
     setData((prev) =>
       prev.map((d, i) => (i === dayIndex ? { ...d, tasks: d.tasks.filter((t) => t.id !== taskId) } : d))
@@ -248,7 +236,7 @@ export function useWeeklyPlan(userId: string | null) {
       let fromDayIndex = -1;
       let task: Task | undefined;
       for (let i = 0; i < prev.length; i++) {
-        const t = prev[i].tasks.find((x) => x.id === taskId);
+        const t = prev[i]?.tasks.find((x) => x.id === taskId);
         if (t) {
           fromDayIndex = i;
           task = t;
@@ -280,7 +268,7 @@ export function useWeeklyPlan(userId: string | null) {
   const updateTaskFull = useCallback(
     (dayIndex: number, taskId: string, fields: Omit<Task, 'id'>, moveToDayIndex?: number) => {
       setData((prev) => {
-        const from = prev[dayIndex].tasks.find((t) => t.id === taskId);
+        const from = prev[dayIndex]?.tasks.find((t) => t.id === taskId);
         if (!from) return prev;
         const next = { ...from, ...fields, id: taskId };
         if (moveToDayIndex !== undefined && moveToDayIndex !== dayIndex) {
@@ -386,13 +374,15 @@ export function useWeeklyPlan(userId: string | null) {
     [userId]
   );
 
-  const addTasksFromAiDrafts = useCallback((drafts: AiTaskDraft[]) => {
-    if (!drafts.length) return;
+  const addTasksFromAiDrafts = useCallback((drafts: AiTaskDraft[]): { added: number; skipped: number } => {
+    if (!drafts.length) return { added: 0, skipped: 0 };
+    let added = 0;
+    let skipped = 0;
     setData((prev) => {
       const next = prev.map((d) => ({ ...d, tasks: [...d.tasks] }));
       for (const draft of drafts) {
         const dayIdx = next.findIndex((x) => x.day === draft.day);
-        if (dayIdx < 0) continue;
+        if (dayIdx < 0) { skipped++; continue; }
         const assignees = resolveAssignees(draft.assigneeNames);
         const task: Task = {
           id: newTaskId(),
@@ -403,10 +393,12 @@ export function useWeeklyPlan(userId: string | null) {
           notes: '',
           attachments: [],
         };
-        next[dayIdx].tasks.push(task);
+        next[dayIdx]!.tasks.push(task);
+        added++;
       }
       return next;
     });
+    return { added, skipped };
   }, []);
 
   return {
@@ -420,21 +412,16 @@ export function useWeeklyPlan(userId: string | null) {
     searchInputRef,
     fileInputRef,
     preparerName,
-    setPreparerName,
     weekStart,
-    setWeekStart,
     weekLabel: formatWeekLabel(weekStart),
     reminders,
     setReminderAt,
-    editingNote,
-    setEditingNote,
     taskModal,
     setTaskModal,
     openAddTask: (dayIndex: number) => setTaskModal({ mode: 'add', dayIndex }),
     openEditTask: (dayIndex: number, taskId: string) => setTaskModal({ mode: 'edit', dayIndex, taskId }),
     closeTaskModal: () => setTaskModal(null),
     toggleTaskStatus,
-    updateTaskNotes,
     deleteTask,
     addTaskWithFields,
     moveOrReorderTask,

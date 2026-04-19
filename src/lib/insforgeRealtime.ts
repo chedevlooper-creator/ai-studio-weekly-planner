@@ -44,6 +44,8 @@ type AnyRealtime = {
   off?: (event: string, listener: (payload: unknown) => void) => void;
 };
 
+const RECONNECT_INTERVAL_MS = 15_000;
+
 export function subscribePlanChannel(
   userId: string,
   onRemoteUpdate: (snapshot: PlanSnapshot) => void
@@ -68,7 +70,16 @@ export function subscribePlanChannel(
     onRemoteUpdate(p.snapshot);
   };
 
-  const ready = (async () => {
+  const disconnectHandler = () => {
+    if (!active) return;
+    console.warn('Realtime disconnected, will reconnect…');
+    startReconnect();
+  };
+
+  let reconnectTimer: ReturnType<typeof setInterval> | null = null;
+  let active = true;
+
+  const subscribe = async (): Promise<boolean> => {
     try {
       if (!realtime.isConnected) {
         await realtime.connect();
@@ -84,7 +95,28 @@ export function subscribePlanChannel(
       console.warn('Realtime init error:', err);
       return false;
     }
-  })();
+  };
+
+  const ready = subscribe();
+
+  const startReconnect = () => {
+    if (reconnectTimer || !active) return;
+    reconnectTimer = setInterval(async () => {
+      if (!active) return;
+      try {
+        if (!realtime.isConnected) {
+          await realtime.connect();
+        }
+        await realtime.subscribe(channel);
+        realtime.off?.(PLAN_UPDATED_EVENT, handler);
+        realtime.on(PLAN_UPDATED_EVENT, handler);
+      } catch {
+        /* reconnect will retry */
+      }
+    }, RECONNECT_INTERVAL_MS);
+  };
+
+  realtime.on('disconnect', disconnectHandler);
 
   return {
     ready,
@@ -102,8 +134,14 @@ export function subscribePlanChannel(
       }
     },
     unsubscribe: () => {
+      active = false;
+      if (reconnectTimer) {
+        clearInterval(reconnectTimer);
+        reconnectTimer = null;
+      }
       try {
         realtime.off?.(PLAN_UPDATED_EVENT, handler);
+        realtime.off?.('disconnect', disconnectHandler);
         realtime.unsubscribe(channel);
       } catch {
         /* noop */

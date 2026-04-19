@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T11:08:33.067Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJPV2W5RGEHGJ0TWM2X4RM2",
+    "invocationKey": "perf-ux-techdebt-overhaul:S000002:performance-optimization",
+    "invocationHash": "1878680f8a8ce124231b6690e6b826e2cd00830b0e678781259cf129bff10b18",
+    "stepId": "S000002",
+    "taskId": "performance-optimization",
+    "kind": "agent",
+    "label": "Implement performance optimizations: code splitting, lazy loading, bundle optimization",
+    "taskDefRef": "tasks/01KPJPV2W5RGEHGJ0TWM2X4RM2/task.json"
+  },
+  "checksum": "60b31ae1b6fa112f5261e44b8ff7b233e7be71d6095c755cfcae9307fd30c715"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJQ0BZYME66S1S2Y1X4P158",
+  "taskId": "build-verify",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000003:build-verify",
+  "status": "ok",
+  "result": {
+    "exitCode": 0,
+    "output": "Build completed successfully. Main chunk: 251.94 KB. No warnings.",
+    "success": true
+  },
+  "startedAt": "2026-04-19T11:11:35.531Z",
+  "finishedAt": "2026-04-19T11:11:35.531Z",
+  "value": {
+    "exitCode": 0,
+    "output": "Build completed successfully. Main chunk: 251.94 KB. No warnings.",
+    "success": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJNRP7SX28QBJ7D3XY45MSR",
+  "taskId": "cleanup-dead-code",
+  "invocationKey": "ui-polish-cleanup:S000001:cleanup-dead-code",
+  "status": "ok",
+  "result": {
+    "cleaned": [
+      "No remaining dead imports found - all references to deleted files were already cleaned",
+      "StatsCards and PlanStats are actively used in DesktopHeader, MobileHeader, AppHeader - kept",
+      "Build passes successfully"
+    ],
+    "removed": [
+      "src/components/header/PerformanceSection.tsx (already removed by prior run)",
+      "src/components/planner/BottomPanels.tsx (already removed by prior run)",
+      "src/components/planner/KeyboardShortcutsOverlay.tsx (already removed by prior run)",
+      "src/hooks/useFocusTrap.ts (already removed by prior run)",
+      "src/hooks/useSwipe.ts (already removed by prior run)"
+    ]
+  },
+  "startedAt": "2026-04-19T10:50:22.431Z",
+  "finishedAt": "2026-04-19T10:50:22.431Z",
+  "value": {
+    "cleaned": [
+      "No remaining dead imports found - all references to deleted files were already cleaned",
+      "StatsCards and PlanStats are actively used in DesktopHeader, MobileHeader, AppHeader - kept",
+      "Build passes successfully"
+    ],
+    "removed": [
+      "src/components/header/PerformanceSection.tsx (already removed by prior run)",
+      "src/components/planner/BottomPanels.tsx (already removed by prior run)",
+      "src/components/planner/KeyboardShortcutsOverlay.tsx (already removed by prior run)",
+      "src/hooks/useFocusTrap.ts (already removed by prior run)",
+      "src/hooks/useSwipe.ts (already removed by prior run)"
+    ]
+  }
+}

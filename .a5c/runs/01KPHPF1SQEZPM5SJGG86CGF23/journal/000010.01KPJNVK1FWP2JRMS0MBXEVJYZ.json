@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T10:51:21.007Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJNVK07BX2PG0PYPCE4699E",
+    "invocationKey": "ui-polish-cleanup:S000005:visual-polish",
+    "invocationHash": "d6026ee7ded80f3162465be0079868e0439c04396328ee635f7c673d565d7b86",
+    "stepId": "S000005",
+    "taskId": "visual-polish",
+    "kind": "agent",
+    "label": "Final visual polish pass",
+    "taskDefRef": "tasks/01KPJNVK07BX2PG0PYPCE4699E/task.json"
+  },
+  "checksum": "7ae0f506ab73e09a18f87edc1de5b227bd35f4d0a1e08d2b8194afb88f784572"
+}

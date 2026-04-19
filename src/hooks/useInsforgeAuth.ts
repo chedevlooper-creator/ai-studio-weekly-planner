@@ -7,6 +7,29 @@ export interface AuthUser {
   emailVerified?: boolean;
 }
 
+function hasLikelyStoredSession(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (!key) continue;
+      const k = key.toLowerCase();
+      if (!(k.includes('insforge') || k.includes('auth') || k.includes('session') || k.includes('token'))) {
+        continue;
+      }
+      const raw = window.localStorage.getItem(key);
+      if (!raw) continue;
+      const v = raw.toLowerCase();
+      if (v.includes('refresh') || v.includes('access') || v.includes('token')) {
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
 function parseAuthUser(raw: unknown): AuthUser | null {
   if (!raw || typeof raw !== 'object') return null;
   const o = raw as Record<string, unknown>;
@@ -32,13 +55,23 @@ export function useInsforgeAuth() {
       setLoading(false);
       return;
     }
+
+    // Fresh visitors/guest mode usually have no persisted session.
+    // Skip bootstrap request to avoid expected 401 + refresh-token warnings.
+    if (!hasLikelyStoredSession()) {
+      setLoading(false);
+      return;
+    }
+
     client.auth.getCurrentUser().then(({ data, error: authError }) => {
       if (authError) {
         const msg = authError.message ?? '';
-        if (!msg.toLowerCase().includes('refresh token')) {
+        const lower = msg.toLowerCase();
+        const expected = lower.includes('refresh token') || lower.includes('unauthorized') || lower.includes('not authorized');
+        if (!expected) {
           setError('Kullanıcı bilgisi alınamadı.');
+          console.warn('[Auth]', msg);
         }
-        console.warn('[Auth]', msg);
       }
       setUser(parseAuthUser(data?.user));
       setLoading(false);

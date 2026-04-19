@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T10:50:26.501Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJNSXS1JJXMW3CPTWZDEFPV",
+    "invocationKey": "ui-polish-cleanup:S000002:fix-remaining-alerts",
+    "invocationHash": "d0372924a6040c27665d40e02e89834824f30b3644e0609689098cdb6fff5012",
+    "stepId": "S000002",
+    "taskId": "fix-remaining-alerts",
+    "kind": "agent",
+    "label": "Replace last window.alert with toast",
+    "taskDefRef": "tasks/01KPJNSXS1JJXMW3CPTWZDEFPV/task.json"
+  },
+  "checksum": "f763aacf1517643923396cf14f3edc115bc313cb1dd4fe90e826ff8dc92841f9"
+}

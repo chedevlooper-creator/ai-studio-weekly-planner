@@ -29,7 +29,7 @@ export function Modal({ open, onClose, title, children, variant = 'dialog', clas
     const last = focusable[focusable.length - 1];
     (first ?? el).focus();
 
-    const handleTab = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key !== 'Tab') return;
       if (focusable.length === 0) {
@@ -43,9 +43,9 @@ export function Modal({ open, onClose, title, children, variant = 'dialog', clas
         if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
       }
     };
-    document.addEventListener('keydown', handleTab);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleTab);
+      document.removeEventListener('keydown', handleKeyDown);
       lastFocusedRef.current?.focus();
     };
   }, [open, onClose]);
@@ -92,7 +92,7 @@ export function Modal({ open, onClose, title, children, variant = 'dialog', clas
         {title && (
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
             <h2 id="modal-title" className="font-display text-lg font-bold text-white">{title}</h2>
-            <button type="button" onClick={onClose} className="rounded-lg p-2 text-neutral-500 hover:bg-white/[0.08] hover:text-white transition-colors" aria-label="Kapat">
+            <button type="button" onClick={onClose} className="rounded-lg p-2 text-zinc-500 hover:bg-white/[0.08] hover:text-white transition-colors" aria-label="Kapat">
               <X className="size-4" />
             </button>
           </div>

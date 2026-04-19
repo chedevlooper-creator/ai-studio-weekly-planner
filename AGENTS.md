@@ -131,3 +131,51 @@ Available languages:
 - Storage: Upload files to buckets, store URLs in database
 - AI operations are OpenAI-compatible
 - **EXTRA IMPORTANT**: Use Tailwind CSS 3.4 (do not upgrade to v4). Lock these dependencies in `package.json`
+
+---
+
+# Repo-Specific Notes
+
+## Stack
+
+- React 19 + TypeScript 5.8 + Vite 6 (SPA, no router)
+- Tailwind CSS v4 via `@tailwindcss/vite` plugin (already v4 despite InsForge docs warning above — do NOT downgrade)
+- InsForge SDK (`@insforge/sdk`) for backend; client created in `src/lib/insforgeClient.ts`
+- `@dnd-kit` for drag-and-drop
+- Node 20 required (`engines` in package.json)
+
+## Commands
+
+| Task | Command |
+|---|---|
+| Dev server | `npm run dev` (port 5173) |
+| Build | `npm run build` |
+| Typecheck | `npm run lint:app` (runs `tsc --noEmit`) |
+| Full lint | `npm run lint` (typechecks app + `openclaw-proxy`) |
+
+There are **no test scripts** configured.
+
+## Path alias
+
+`@/*` maps to the repo root (not `src/`). Import as `@/src/...` for source files.
+
+## Environment
+
+Copy `.env.example` to `.env.local`. Vite exposes vars prefixed `VITE_`:
+- `VITE_INSFORGE_BASE_URL`
+- `VITE_INSFORGE_ANON_KEY`
+
+## Architecture
+
+- `src/main.tsx` — app entry (ThemeProvider > ToastProvider > App)
+- `src/lib/` — InsForge integrations (client, storage, realtime, plan storage) and utilities
+- `src/components/` — React UI components
+- `src/hooks/` — custom hooks (theme, etc.)
+- `src/data/`, `src/types/` — data helpers and type definitions
+- `vite.config.ts` proxies `/openclaw-api` to `localhost:18789`; HMR can be disabled via `DISABLE_HMR=true`
+
+## Gotchas
+
+- `tsconfig.json` has `noUncheckedIndexedAccess: true` — handle `undefined` on all index accesses
+- `openclaw-proxy/` is excluded from TS compilation but has its own typecheck via `npm run lint:proxy`
+- Vite config uses manual chunks for `@dnd-kit`, `@insforge/sdk`, and `lucide-react` — update if adding large deps

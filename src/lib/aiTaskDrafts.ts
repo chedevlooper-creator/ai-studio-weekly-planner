@@ -15,7 +15,7 @@ export type AiTaskDraft = {
 export function extractJsonObject(text: string): Record<string, unknown> {
   const t = text.trim();
   const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const body = (fence ? fence[1] : t).trim();
+  const body = (fence ? fence[1] ?? t : t).trim();
   const parsed = JSON.parse(body) as unknown;
   if (!parsed || typeof parsed !== 'object') throw new Error('Model geçerli JSON döndürmedi.');
   return parsed as Record<string, unknown>;

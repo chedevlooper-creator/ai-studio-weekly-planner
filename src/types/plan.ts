@@ -6,6 +6,9 @@
 export type Status = 'Bekliyor' | 'Devam Eden' | 'Tamamlanan';
 export type Priority = 'Yüksek' | 'Orta';
 
+export const STATUSES: Status[] = ['Bekliyor', 'Devam Eden', 'Tamamlanan'];
+export const PRIORITIES: Priority[] = ['Yüksek', 'Orta'];
+
 export interface Assignee {
   id: string;
   name: string;

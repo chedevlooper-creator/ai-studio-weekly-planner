@@ -38,7 +38,7 @@ export function MobileBottomNav({ activeTab, aiOpen = false, onAiOpen, onTabChan
                 'relative flex min-h-[56px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-2.5 text-[10px] font-semibold transition-all',
                 isActive
                   ? 'bg-white/[0.04] text-accent-light'
-                  : 'text-slate-600 hover:text-slate-400',
+                  : 'text-zinc-600 hover:text-zinc-400',
               )}
               aria-label={tab.label}
               aria-current={!isAiTab && isActive ? 'page' : undefined}

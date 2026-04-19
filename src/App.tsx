@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Fragment, useCallback, useMemo, useState } from 'react';
+import { Fragment, Suspense, lazy, useCallback, useMemo, useState } from 'react';
+import { Skeleton } from './components/ui/Skeleton';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import {
   DndContext,
   type DragEndEvent,
@@ -19,14 +21,17 @@ import { AuthGate } from './components/auth/AuthGate';
 import { AppHeader } from './components/header/AppHeader';
 import { FilterBar } from './components/planner/FilterBar';
 import { DaySection } from './components/planner/DaySection';
-import { TaskEditModal } from './components/planner/TaskEditModal';
-import { FilePreviewModal } from './components/planner/FilePreviewModal';
-import { AIAssistant } from './components/planner/AIAssistant';
 import { FloatingActionButton } from './components/planner/FloatingActionButton';
 import { MobileBottomNav, type MobileTab } from './components/planner/MobileBottomNav';
-import { TeamPanel } from './components/planner/TeamPanel';
-import { RemindersPanel } from './components/planner/RemindersPanel';
+
+// Lazy-loaded components for code splitting
+const TaskEditModal = lazy(() => import('./components/planner/TaskEditModal').then(m => ({ default: m.TaskEditModal })));
+const FilePreviewModal = lazy(() => import('./components/planner/FilePreviewModal').then(m => ({ default: m.FilePreviewModal })));
+const AIAssistant = lazy(() => import('./components/planner/AIAssistant').then(m => ({ default: m.AIAssistant })));
+const TeamPanel = lazy(() => import('./components/planner/TeamPanel').then(m => ({ default: m.TeamPanel })));
+const RemindersPanel = lazy(() => import('./components/planner/RemindersPanel').then(m => ({ default: m.RemindersPanel })));
 import { useWeeklyPlan } from './hooks/useWeeklyPlan';
+import type { AuthUser } from './hooks/useInsforgeAuth';
 import { useToast } from './components/ui/Toast';
 import { findDayIndexByTaskId } from './lib/planDnd';
 import type { TaskAttachment } from './types/plan';
@@ -61,7 +66,7 @@ function MainApp({
   user, auth, activeUserId, guestMode, previewAttachment, setPreviewAttachment,
 }: {
   user: { id?: string; email?: string } | null;
-  auth: { user: any; signOut: () => Promise<void> };
+  auth: { user: AuthUser | null; signOut: () => Promise<void> };
   activeUserId: string | null;
   guestMode: boolean;
   previewAttachment: TaskAttachment | null;
@@ -74,11 +79,21 @@ function MainApp({
   const {
     data, filter, searchQuery, fileInputRef, stats, assigneeStats, syncStatus,
     expandedDays, toggleDay, setFilter, setSearchQuery, searchInputRef,
-    reminders, setReminderAt, editingNote, setEditingNote,
+    reminders, setReminderAt,
     taskModal, closeTaskModal, openAddTask, openEditTask,
-    toggleTaskStatus, updateTaskNotes, deleteTask, addTaskWithFields,
+    toggleTaskStatus, deleteTask, addTaskWithFields,
     moveOrReorderTask, updateTaskFull, exportJson, importFromFile, quickAttachFiles,
   } = plan;
+
+  const aiPlanActions = {
+    ...plan,
+    addTasksFromAiDrafts: (drafts: Parameters<typeof plan.addTasksFromAiDrafts>[0]) => {
+      const result = plan.addTasksFromAiDrafts(drafts);
+      if (result.added > 0) toast.success(`${result.added} görev eklendi.`);
+      if (result.skipped > 0) toast.warning(`${result.skipped} görev atlandı.`);
+      return result;
+    },
+  };
 
   const dragEnabled = filter === 'Tümü' && !searchQuery.trim();
   const sensors = useSensors(
@@ -129,7 +144,7 @@ function MainApp({
   }, []);
 
   return (
-    <div className="min-h-screen font-sans text-slate-100">
+    <div className="min-h-screen font-sans text-zinc-100 noise-bg">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[500] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white">
         Ana içeriğe geç
       </a>
@@ -140,10 +155,10 @@ function MainApp({
       <main id="main-content" className="mx-auto flex w-full max-w-[min(96vw,1440px)] flex-col gap-4 px-2 py-3 pb-[calc(env(safe-area-inset-bottom,0px)+5.75rem)] sm:gap-5 sm:px-4 sm:py-5 sm:pb-5 lg:px-6">
 
         <AppHeader
-          user={user} stats={stats} assigneeStats={assigneeStats} syncStatus={syncStatus}
+          user={user} stats={stats} syncStatus={syncStatus}
           activeUserId={activeUserId} onExport={handleExport}
           onImport={() => fileInputRef.current?.click()}
-          onSignOut={() => void auth.signOut()} fileInputRef={fileInputRef}
+          onSignOut={() => void auth.signOut()}
         />
 
         {!user && guestMode && (
@@ -168,13 +183,9 @@ function MainApp({
                       expanded={expandedDays.includes(dayData.day)}
                       onToggleExpand={() => toggleDay(dayData.day)}
                       filter={filter} searchQuery={searchQuery} dragEnabled={dragEnabled}
-                      editingNote={editingNote}
                       onToggleTaskStatus={(taskId) => toggleTaskStatus(dayIndex, taskId)}
-                      onUpdateTaskNotes={(taskId, notes) => updateTaskNotes(dayIndex, taskId, notes)}
-                      onEditingNoteClose={() => setEditingNote(null)}
-                      onStartEditNote={(taskId) => setEditingNote({ dayIndex, taskId })}
-                      onAddTask={() => openAddTask(dayIndex)}
                       onEditTask={(taskId) => openEditTask(dayIndex, taskId)}
+                      onAddTask={() => openAddTask(dayIndex)}
                       onDeleteTask={(taskId) => deleteTask(dayIndex, taskId)}
                       onQuickAttachFiles={(taskId, files) => quickAttachFiles(dayIndex, taskId, files)}
                       onPreviewAttachment={setPreviewAttachment}
@@ -188,27 +199,51 @@ function MainApp({
 
         {/* ── TAKIM ── */}
         <div className={showTeam ? 'sm:hidden' : 'hidden'}>
-          <TeamPanel assigneeStats={assigneeStats} />
+          <ErrorBoundary>
+            <Suspense fallback={<Skeleton className="h-48 rounded-xl" />}>
+              <TeamPanel assigneeStats={assigneeStats} />
+            </Suspense>
+          </ErrorBoundary>
         </div>
 
         {/* ── NOTLAR ── */}
         <div className={showNotes ? 'sm:hidden' : 'hidden'}>
-          <RemindersPanel reminders={reminders} onChange={setReminderAt} />
+          <ErrorBoundary>
+            <Suspense fallback={<Skeleton className="h-48 rounded-xl" />}>
+              <RemindersPanel reminders={reminders} onChange={setReminderAt} />
+            </Suspense>
+          </ErrorBoundary>
         </div>
 
         {/* Desktop bottom panels */}
         <div className="no-print hidden sm:flex flex-col gap-5">
-          <div className="lg:hidden"><TeamPanel assigneeStats={assigneeStats} /></div>
-          <RemindersPanel reminders={reminders} onChange={setReminderAt} />
+          <ErrorBoundary>
+            <Suspense fallback={<Skeleton className="h-48 rounded-xl" />}>
+              <div className="lg:hidden"><TeamPanel assigneeStats={assigneeStats} /></div>
+              <RemindersPanel reminders={reminders} onChange={setReminderAt} />
+            </Suspense>
+          </ErrorBoundary>
         </div>
 
       </main>
 
-      {/* Modals */}
-      <TaskEditModal modal={taskModal} days={data} task={modalTask} onClose={closeTaskModal}
-        onAdd={addTaskWithFields} onUpdate={updateTaskFull} onDelete={deleteTask} ownerId={activeUserId} />
-      <FilePreviewModal attachment={previewAttachment} onClose={() => setPreviewAttachment(null)} />
-      <AIAssistant planActions={plan} open={isAiAssistantOpen} onOpenChange={setIsAiAssistantOpen} />
+      {/* Modals (lazy-loaded) */}
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          {taskModal && <TaskEditModal modal={taskModal} days={data} task={modalTask} onClose={closeTaskModal}
+            onAdd={addTaskWithFields} onUpdate={updateTaskFull} onDelete={deleteTask} ownerId={activeUserId} />}
+        </Suspense>
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          {previewAttachment && <FilePreviewModal attachment={previewAttachment} onClose={() => setPreviewAttachment(null)} />}
+        </Suspense>
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          <AIAssistant planActions={aiPlanActions} open={isAiAssistantOpen} onOpenChange={setIsAiAssistantOpen} />
+        </Suspense>
+      </ErrorBoundary>
 
       {/* Mobile */}
       <MobileBottomNav activeTab={mobileTab} aiOpen={isAiAssistantOpen} onAiOpen={() => setIsAiAssistantOpen(true)} onTabChange={handleMobileTabChange} />

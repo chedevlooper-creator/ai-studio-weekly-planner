@@ -1,0 +1,111 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "outputSchema": {
+      "required": [
+        "score",
+        "strengths",
+        "issues",
+        "fixPlan",
+        "ok"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "previousReview": null,
+        "projectRoot": "C:/Users/isaha/Downloads/zip",
+        "targetScore": 85
+      },
+      "instructions": [
+        "Read the key files to assess the current state:",
+        "- vite.config.ts (manual chunks, build config)",
+        "- tsconfig.json (strict mode settings)",
+        "- src/App.tsx (lazy loading, error boundaries, Suspense)",
+        "- src/components/ui/ (ErrorBoundary, theme support)",
+        "- src/hooks/ (useTheme, memoization patterns)",
+        "- src/components/planner/TaskRow.tsx (React.memo)",
+        "- src/components/header/ (theme toggle)",
+        "- Run \"npm run build\" and check output for chunk sizes",
+        "SCORING CRITERIA (100 points total):",
+        "- Performance (30pts): Code splitting implemented, lazy loading, manual chunks, React.memo on list items, bundle under 500KB per chunk",
+        "- Technical Debt (35pts): TypeScript strict:true enabled and compiling, error boundaries present, proper types, no any types",
+        "- UI/UX (25pts): Theme system with dark/light toggle, micro-interactions, loading states, Suspense fallbacks",
+        "- Build Health (10pts): Clean build with no errors, no warnings except chunk size",
+        "If score < target, provide a fixPlan array of specific issues to address",
+        "Return JSON: { score: number, strengths: string[], issues: string[], fixPlan: string[], ok: boolean }"
+      ],
+      "outputFormat": "JSON",
+      "role": "Senior code reviewer and quality assessor",
+      "task": "Review the current state of the project at C:/Users/isaha/Downloads/zip and score it out of 100."
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPJQF2F7NGQ04Y0K8Q9Z1YQ9/input.json",
+    "outputJsonPath": "tasks/01KPJQF2F7NGQ04Y0K8Q9Z1YQ9/output.json"
+  },
+  "kind": "agent",
+  "title": "Quality review and scoring",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJQF2F7NGQ04Y0K8Q9Z1YQ9",
+  "taskId": "quality-review",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000008:quality-review",
+  "stepId": "S000008",
+  "inputs": {
+    "perf": {
+      "bundleAfter": "251.94 KB main (77KB gzip) + 7 lazy chunks. No Vite warnings.",
+      "bundleBefore": "513.64 KB single chunk (150.48 KB gzip)",
+      "changes": [
+        "React.lazy + Suspense for AIAssistant (21KB chunk), TaskEditModal (10KB), FilePreviewModal (3.4KB), TeamPanel (2.6KB), RemindersPanel (2.8KB)",
+        "Vite manualChunks: vendor-dnd (58KB), vendor-insforge (166KB) separated from main bundle",
+        "React.memo added to DaySection component",
+        "React.memo added to StatsCards and StatsPills components",
+        "TaskRow already had React.memo",
+        "Suspense fallbacks with Skeleton component for lazy-loaded panels",
+        "Conditional rendering for modals (only load when open)"
+      ],
+      "summary": "Implemented code splitting, lazy loading, manual chunks, and React.memo. Main bundle reduced from 513KB to 252KB (51% reduction). 7 separate chunks created."
+    },
+    "projectRoot": "C:/Users/isaha/Downloads/zip",
+    "targetScore": 85,
+    "techdebt": {
+      "changes": [
+        "tsconfig.json: Added strict:true and noUncheckedIndexedAccess:true",
+        "Installed @types/react and @types/react-dom as devDependencies",
+        "Fixed 29 TypeScript strict mode errors across 7 files",
+        "src/data/constants.ts: Fixed TEAM array access with non-null assertions",
+        "src/components/planner/TaskRow.tsx: Added null check for attachment preview",
+        "src/components/ui/Input.tsx: Fixed conditional class expressions",
+        "src/hooks/useWeeklyPlan.ts: Added optional chaining for array access (3 fixes)",
+        "src/lib/aiTaskDrafts.ts: Added nullish coalescing for regex match",
+        "src/lib/insforgeStorage.ts: Added default mimeType fallback",
+        "src/lib/planDnd.ts: Added optional chaining for day access",
+        "Created src/components/ui/ErrorBoundary.tsx with Turkish error UI and retry button",
+        "Wrapped TeamPanel, RemindersPanel, TaskEditModal, FilePreviewModal, AIAssistant with ErrorBoundary"
+      ],
+      "errorsFixed": 29,
+      "strictErrors": 29,
+      "summary": "Enabled TypeScript strict mode with noUncheckedIndexedAccess, fixed all 29 strict errors, installed @types/react and @types/react-dom, created ErrorBoundary component, wrapped all lazy-loaded sections with ErrorBoundary."
+    },
+    "ux": {
+      "changes": [
+        "Created src/hooks/useTheme.tsx — ThemeProvider with dark/light/system modes, localStorage persistence",
+        "Wrapped app with ThemeProvider in src/main.tsx",
+        "Added sun/moon theme toggle button to DesktopHeader",
+        "Added sun/moon theme toggle button to MobileHeader",
+        "Added light theme CSS variables in index.css (.light class overrides surface, accent, text, shadow tokens)",
+        "Added light theme body background gradients",
+        "Added light theme overrides for glass-panel, glass-card, btn-ghost, input-field",
+        "Added hover:scale-[1.008] and active:scale-[0.995] micro-interaction on TaskRow cards",
+        "Button component already had active:scale-[0.97]",
+        "CSS transition on body background-color for smooth theme switch"
+      ],
+      "summary": "Implemented dark/light theme system with ThemeProvider, toggle buttons in both desktop and mobile headers, CSS variable overrides for light theme, and micro-interactions on task cards.",
+      "themeModes": [
+        "dark",
+        "light",
+        "system"
+      ]
+    }
+  }
+}

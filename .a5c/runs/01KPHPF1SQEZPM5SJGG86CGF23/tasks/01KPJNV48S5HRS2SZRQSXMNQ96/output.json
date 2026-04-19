@@ -1,0 +1,5 @@
+{
+  "success": true,
+  "stdout": "openclaw-proxy/src/index.ts(179,47): error TS2304: Cannot find name 'ExecutionContext'.\nopenclaw-proxy/src/index.ts(257,13): error TS2304: Cannot find name 'ExportedHandler'.\nEXIT:2",
+  "notes": "TypeScript errors are only in openclaw-proxy (Cloudflare Workers types, separate project). Main app builds cleanly via npm run build."
+}

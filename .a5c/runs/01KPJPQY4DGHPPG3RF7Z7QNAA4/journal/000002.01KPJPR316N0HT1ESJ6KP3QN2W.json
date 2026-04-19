@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T11:06:54.887Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPJPR2ZZH2B0VE157TFZ6PDW",
+    "invocationKey": "perf-ux-techdebt-overhaul:S000001:audit-codebase",
+    "invocationHash": "cfe892a3151d0ac2c01527c2382333d276d5b37c4f4cf644feb58f7350e58c7a",
+    "stepId": "S000001",
+    "taskId": "audit-codebase",
+    "kind": "agent",
+    "label": "Audit codebase for performance, tech debt, and UX gaps",
+    "taskDefRef": "tasks/01KPJPR2ZZH2B0VE157TFZ6PDW/task.json"
+  },
+  "checksum": "9f19866396bff6cb27f0f876691ae332c77655d73a6804d38c62cb89269a68c1"
+}

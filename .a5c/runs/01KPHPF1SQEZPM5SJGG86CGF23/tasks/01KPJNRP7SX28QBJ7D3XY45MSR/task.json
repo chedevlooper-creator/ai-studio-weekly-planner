@@ -1,0 +1,32 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "prompt": {
+      "instructions": [
+        "Delete: src/components/header/PerformanceSection.tsx (not imported anywhere)",
+        "Delete: src/components/planner/BottomPanels.tsx (not imported anywhere)",
+        "Delete: src/components/planner/KeyboardShortcutsOverlay.tsx (not imported anywhere)",
+        "Delete: src/hooks/useFocusTrap.ts (not imported anywhere)",
+        "Delete: src/hooks/useSwipe.ts (not imported anywhere)",
+        "Remove StatsCards PlanStats type from DesktopHeader/MobileHeader if not used",
+        "Clean up any unused imports in all modified files",
+        "Verify build passes after cleanup"
+      ],
+      "outputFormat": "JSON { removed: string[], cleaned: string[] }",
+      "role": "Code cleanup engineer",
+      "task": "Remove unused files and dead imports from the Kafkasder project"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPJNRP7SX28QBJ7D3XY45MSR/input.json",
+    "outputJsonPath": "tasks/01KPJNRP7SX28QBJ7D3XY45MSR/output.json"
+  },
+  "kind": "agent",
+  "title": "Remove dead/unused files and imports",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPJNRP7SX28QBJ7D3XY45MSR",
+  "taskId": "cleanup-dead-code",
+  "invocationKey": "ui-polish-cleanup:S000001:cleanup-dead-code",
+  "stepId": "S000001",
+  "inputs": {}
+}

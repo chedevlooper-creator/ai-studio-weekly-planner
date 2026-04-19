@@ -26,7 +26,7 @@ export function Avatar({ name, color, size = 'md', className }: AvatarProps) {
   );
 }
 
-export function AvatarGroup({ children, max = 4, className }: { children: ReactNode; max?: number; className?: string }) {
+function AvatarGroup({ children, max = 4, className }: { children: ReactNode; max?: number; className?: string }) {
   const items = Array.isArray(children) ? children : [children];
   const visible = items.slice(0, max);
   const overflow = items.length - max;
@@ -37,7 +37,7 @@ export function AvatarGroup({ children, max = 4, className }: { children: ReactN
         <div key={i} className="border-2 border-surface-1 rounded-full">{child}</div>
       ))}
       {overflow > 0 && (
-        <div className="flex size-5 items-center justify-center rounded-full border-2 border-surface-1 bg-surface-3 text-[8px] font-bold text-neutral-400">
+        <div className="flex size-5 items-center justify-center rounded-full border-2 border-surface-1 bg-surface-3 text-[8px] font-bold text-zinc-400">
           +{overflow}
         </div>
       )}

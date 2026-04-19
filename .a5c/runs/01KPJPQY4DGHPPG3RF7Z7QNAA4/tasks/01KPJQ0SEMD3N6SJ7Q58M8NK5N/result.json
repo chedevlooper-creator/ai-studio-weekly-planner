@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJQ0SEMD3N6SJ7Q58M8NK5N",
+  "taskId": "tech-debt-cleanup",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000004:tech-debt-cleanup",
+  "status": "ok",
+  "result": {
+    "changes": [
+      "tsconfig.json: Added strict:true and noUncheckedIndexedAccess:true",
+      "Installed @types/react and @types/react-dom as devDependencies",
+      "Fixed 29 TypeScript strict mode errors across 7 files",
+      "src/data/constants.ts: Fixed TEAM array access with non-null assertions",
+      "src/components/planner/TaskRow.tsx: Added null check for attachment preview",
+      "src/components/ui/Input.tsx: Fixed conditional class expressions",
+      "src/hooks/useWeeklyPlan.ts: Added optional chaining for array access (3 fixes)",
+      "src/lib/aiTaskDrafts.ts: Added nullish coalescing for regex match",
+      "src/lib/insforgeStorage.ts: Added default mimeType fallback",
+      "src/lib/planDnd.ts: Added optional chaining for day access",
+      "Created src/components/ui/ErrorBoundary.tsx with Turkish error UI and retry button",
+      "Wrapped TeamPanel, RemindersPanel, TaskEditModal, FilePreviewModal, AIAssistant with ErrorBoundary"
+    ],
+    "errorsFixed": 29,
+    "strictErrors": 29,
+    "summary": "Enabled TypeScript strict mode with noUncheckedIndexedAccess, fixed all 29 strict errors, installed @types/react and @types/react-dom, created ErrorBoundary component, wrapped all lazy-loaded sections with ErrorBoundary."
+  },
+  "startedAt": "2026-04-19T11:15:28.588Z",
+  "finishedAt": "2026-04-19T11:15:28.588Z",
+  "value": {
+    "changes": [
+      "tsconfig.json: Added strict:true and noUncheckedIndexedAccess:true",
+      "Installed @types/react and @types/react-dom as devDependencies",
+      "Fixed 29 TypeScript strict mode errors across 7 files",
+      "src/data/constants.ts: Fixed TEAM array access with non-null assertions",
+      "src/components/planner/TaskRow.tsx: Added null check for attachment preview",
+      "src/components/ui/Input.tsx: Fixed conditional class expressions",
+      "src/hooks/useWeeklyPlan.ts: Added optional chaining for array access (3 fixes)",
+      "src/lib/aiTaskDrafts.ts: Added nullish coalescing for regex match",
+      "src/lib/insforgeStorage.ts: Added default mimeType fallback",
+      "src/lib/planDnd.ts: Added optional chaining for day access",
+      "Created src/components/ui/ErrorBoundary.tsx with Turkish error UI and retry button",
+      "Wrapped TeamPanel, RemindersPanel, TaskEditModal, FilePreviewModal, AIAssistant with ErrorBoundary"
+    ],
+    "errorsFixed": 29,
+    "strictErrors": 29,
+    "summary": "Enabled TypeScript strict mode with noUncheckedIndexedAccess, fixed all 29 strict errors, installed @types/react and @types/react-dom, created ErrorBoundary component, wrapped all lazy-loaded sections with ErrorBoundary."
+  }
+}

@@ -3,12 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { DayTasks, PlanSnapshot, Priority, Status, Task } from '../types/plan';
-import { PLAN_EXPORT_VERSION } from '../types/plan';
+import { STATUSES, PRIORITIES, PLAN_EXPORT_VERSION, type DayTasks, type PlanSnapshot, type Priority, type Status, type Task } from '../types/plan';
 import { DEFAULT_WEEK_START_ISO, emptyReminders, INITIAL_DATA, TEAM } from '../data/constants';
-
-const STATUSES: Status[] = ['Bekliyor', 'Devam Eden', 'Tamamlanan'];
-const PRIORITIES: Priority[] = ['Yüksek', 'Orta'];
 
 function isStatus(v: unknown): v is Status {
   return typeof v === 'string' && STATUSES.includes(v as Status);
@@ -190,28 +186,6 @@ export function buildExportPayload(
     days: snapshot.days,
     reminders: snapshot.reminders,
   };
-}
-
-export function snapshotToCsv(snapshot: PlanSnapshot): string {
-  const lines: string[] = ['Gün,Başlık,Öncelik,Durum,Notlar'];
-  for (const d of snapshot.days) {
-    for (const t of d.tasks) {
-      const row = [
-        d.day,
-        escapeCsv(t.title),
-        t.priority,
-        t.status,
-        escapeCsv(t.notes.replace(/\r?\n/g, ' ')),
-      ].join(',');
-      lines.push(row);
-    }
-  }
-  return lines.join('\r\n');
-}
-
-function escapeCsv(s: string): string {
-  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
 }
 
 export function newTaskId(): string {

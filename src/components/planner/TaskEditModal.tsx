@@ -7,14 +7,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Paperclip, X } from 'lucide-react';
 import { TEAM } from '../../data/constants';
 import { uploadTaskFile, TASK_FILES_BUCKET, MAX_TASK_FILE_SIZE } from '../../lib/insforgeStorage';
-import type { DayTasks, Priority, Status, Task, TaskAttachment } from '../../types/plan';
+import { STATUSES, PRIORITIES, type DayTasks, type Priority, type Status, type Task, type TaskAttachment } from '../../types/plan';
 import type { TaskModalState } from '../../hooks/useWeeklyPlan';
 import { useToast } from '../ui/Toast';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
-
-const STATUSES: Status[] = ['Bekliyor', 'Devam Eden', 'Tamamlanan'];
-const PRIORITIES: Priority[] = ['Yüksek', 'Orta'];
 
 export function TaskEditModal({
   modal,
@@ -43,6 +40,7 @@ export function TaskEditModal({
   const [attachments, setAttachments] = useState<TaskAttachment[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [moveToDayIndex, setMoveToDayIndex] = useState(0);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -105,12 +103,15 @@ export function TaskEditModal({
     const fields = buildFields();
     if (!fields) return;
     setIsSaving(true);
-    if (modal.mode === 'add') {
-      onAdd(moveToDayIndex, fields);
-    } else {
-      onUpdate(modal.dayIndex, modal.taskId, fields, moveToDayIndex !== modal.dayIndex ? moveToDayIndex : undefined);
+    try {
+      if (modal.mode === 'add') {
+        onAdd(moveToDayIndex, fields);
+      } else {
+        onUpdate(modal.dayIndex, modal.taskId, fields, moveToDayIndex !== modal.dayIndex ? moveToDayIndex : undefined);
+      }
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   const handleFileSelect = async (fileList: FileList | null) => {
@@ -147,6 +148,7 @@ export function TaskEditModal({
   };
 
   return (
+    <>
     <Modal
       open={!!modal}
       onClose={onClose}
@@ -157,8 +159,9 @@ export function TaskEditModal({
           {/* Day selector */}
           {modal.mode === 'add' && (
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Gün</label>
+              <label htmlFor="task-day" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Gün</label>
               <select
+                id="task-day"
                 value={moveToDayIndex}
                 onChange={(e) => setMoveToDayIndex(Number(e.target.value))}
                 className="input-field"
@@ -172,8 +175,9 @@ export function TaskEditModal({
 
           {/* Title */}
           <div>
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Başlık</label>
+            <label htmlFor="task-title" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Başlık</label>
             <input
+              id="task-title"
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -185,8 +189,9 @@ export function TaskEditModal({
           {/* Status + Priority grid */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Durum</label>
+              <label htmlFor="task-status" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Durum</label>
               <select
+                id="task-status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as Status)}
                 className="input-field"
@@ -197,8 +202,9 @@ export function TaskEditModal({
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Öncelik</label>
+              <label htmlFor="task-priority" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Öncelik</label>
               <select
+                id="task-priority"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Priority)}
                 className="input-field"
@@ -212,7 +218,7 @@ export function TaskEditModal({
 
           {/* Assignees */}
           <div>
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Sorumlular</span>
+            <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Sorumlular</span>
             <div className="flex flex-wrap gap-2">
               {TEAM.map((m) => {
                 const active = assigneeIds.includes(m.id);
@@ -224,7 +230,7 @@ export function TaskEditModal({
                     className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all ${
                       active
                         ? 'border-accent/30 bg-accent/10 text-white shadow-[0_0_12px_rgba(124,131,255,0.14)]'
-                        : 'border-white/[0.06] bg-white/[0.02] text-neutral-500 hover:border-white/[0.12] hover:text-neutral-300'
+                        : 'border-white/[0.06] bg-white/[0.02] text-zinc-400 hover:border-white/[0.12] hover:text-zinc-300'
                     }`}
                   >
                     <span className={`flex size-5 items-center justify-center rounded-full text-[9px] font-bold ${m.color}`}>
@@ -240,8 +246,9 @@ export function TaskEditModal({
           {/* Move day */}
           {modal.mode === 'edit' && (
             <div>
-              <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Gün (taşı)</label>
+              <label htmlFor="task-move-day" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Gün (taşı)</label>
               <select
+                id="task-move-day"
                 value={moveToDayIndex}
                 onChange={(e) => setMoveToDayIndex(Number(e.target.value))}
                 className="input-field"
@@ -255,8 +262,9 @@ export function TaskEditModal({
 
           {/* Notes */}
           <div>
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Notlar</label>
+            <label htmlFor="task-notes" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Notlar</label>
             <textarea
+              id="task-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -266,11 +274,12 @@ export function TaskEditModal({
 
           {/* Files */}
           <div>
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Dosyalar</label>
-            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-white/[0.15] bg-white/[0.02] px-3 py-3 text-sm text-neutral-400 transition-all hover:border-accent/30 hover:bg-accent/[0.04] hover:text-accent-light">
+            <label htmlFor="task-files" className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400">Dosyalar</label>
+            <label htmlFor="task-files" className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-white/[0.15] bg-white/[0.02] px-3 py-3 text-sm text-zinc-400 transition-all hover:border-accent/30 hover:bg-accent/[0.04] hover:text-accent-light">
               <Paperclip className="size-4" aria-hidden />
               Dosya yükle (max 5MB)
               <input
+                id="task-files"
                 type="file"
                 multiple
                 className="hidden"
@@ -285,7 +294,7 @@ export function TaskEditModal({
                 {attachments.map((attachment) => (
                   <li
                     key={attachment.id}
-                    className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-xs text-neutral-300"
+                    className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-xs text-zinc-300"
                   >
                     <span className="truncate">
                       {attachment.name} ({Math.max(1, Math.round(attachment.size / 1024))} KB)
@@ -293,7 +302,7 @@ export function TaskEditModal({
                     <button
                       type="button"
                       onClick={() => setAttachments((prev) => prev.filter((x) => x.id !== attachment.id))}
-                      className="rounded p-1 text-neutral-400 hover:bg-white/[0.08] hover:text-white transition-colors"
+                      className="rounded p-1 text-zinc-400 hover:bg-white/[0.08] hover:text-white transition-colors"
                       aria-label={`${attachment.name} dosyasını kaldır`}
                     >
                       <X className="size-3.5" aria-hidden />
@@ -322,12 +331,12 @@ export function TaskEditModal({
             >
               İptal
             </Button>
-            {modal.mode === 'edit' && (
+            {modal.mode === 'edit' && !confirmDelete && (
               <Button
                 type="button"
                 variant="danger"
                 size="md"
-                onClick={() => onDelete(modal.dayIndex, modal.taskId)}
+                onClick={() => setConfirmDelete(true)}
                 className="w-full sm:ml-auto sm:w-auto"
               >
                 🗑️ Sil
@@ -336,5 +345,35 @@ export function TaskEditModal({
           </div>
         </form>
     </Modal>
+
+    {/* Delete confirmation */}
+    {modal.mode === 'edit' && confirmDelete && (
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="🗑️ Görevi Sil">
+        <div className="px-5 pb-5">
+          <p className="text-sm text-zinc-300">
+            <span className="font-semibold text-white">{task?.title}</span> görevini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+          </p>
+          <div className="mt-6 flex gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setConfirmDelete(false)}
+              className="flex-1"
+            >
+              Vazgeç
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              onClick={() => { onDelete(modal.dayIndex, modal.taskId); setConfirmDelete(false); }}
+              className="flex-1"
+            >
+              Sil
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    )}
+    </>
   );
 }

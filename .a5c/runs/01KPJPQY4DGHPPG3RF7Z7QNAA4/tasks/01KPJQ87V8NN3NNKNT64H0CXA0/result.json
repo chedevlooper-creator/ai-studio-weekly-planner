@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJQ87V8NN3NNKNT64H0CXA0",
+  "taskId": "ux-improvements",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000006:ux-improvements",
+  "status": "ok",
+  "result": {
+    "changes": [
+      "Created src/hooks/useTheme.tsx — ThemeProvider with dark/light/system modes, localStorage persistence",
+      "Wrapped app with ThemeProvider in src/main.tsx",
+      "Added sun/moon theme toggle button to DesktopHeader",
+      "Added sun/moon theme toggle button to MobileHeader",
+      "Added light theme CSS variables in index.css (.light class overrides surface, accent, text, shadow tokens)",
+      "Added light theme body background gradients",
+      "Added light theme overrides for glass-panel, glass-card, btn-ghost, input-field",
+      "Added hover:scale-[1.008] and active:scale-[0.995] micro-interaction on TaskRow cards",
+      "Button component already had active:scale-[0.97]",
+      "CSS transition on body background-color for smooth theme switch"
+    ],
+    "summary": "Implemented dark/light theme system with ThemeProvider, toggle buttons in both desktop and mobile headers, CSS variable overrides for light theme, and micro-interactions on task cards.",
+    "themeModes": [
+      "dark",
+      "light",
+      "system"
+    ]
+  },
+  "startedAt": "2026-04-19T11:19:11.609Z",
+  "finishedAt": "2026-04-19T11:19:11.609Z",
+  "value": {
+    "changes": [
+      "Created src/hooks/useTheme.tsx — ThemeProvider with dark/light/system modes, localStorage persistence",
+      "Wrapped app with ThemeProvider in src/main.tsx",
+      "Added sun/moon theme toggle button to DesktopHeader",
+      "Added sun/moon theme toggle button to MobileHeader",
+      "Added light theme CSS variables in index.css (.light class overrides surface, accent, text, shadow tokens)",
+      "Added light theme body background gradients",
+      "Added light theme overrides for glass-panel, glass-card, btn-ghost, input-field",
+      "Added hover:scale-[1.008] and active:scale-[0.995] micro-interaction on TaskRow cards",
+      "Button component already had active:scale-[0.97]",
+      "CSS transition on body background-color for smooth theme switch"
+    ],
+    "summary": "Implemented dark/light theme system with ThemeProvider, toggle buttons in both desktop and mobile headers, CSS variable overrides for light theme, and micro-interactions on task cards.",
+    "themeModes": [
+      "dark",
+      "light",
+      "system"
+    ]
+  }
+}

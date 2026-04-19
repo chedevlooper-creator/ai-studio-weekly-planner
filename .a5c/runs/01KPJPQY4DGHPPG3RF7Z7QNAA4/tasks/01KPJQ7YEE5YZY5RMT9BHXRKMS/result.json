@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPJQ7YEE5YZY5RMT9BHXRKMS",
+  "taskId": "build-verify",
+  "invocationKey": "perf-ux-techdebt-overhaul:S000005:build-verify",
+  "status": "ok",
+  "result": {
+    "output": "Build passed. Strict TS compiles clean. 253KB main chunk.",
+    "success": true
+  },
+  "startedAt": "2026-04-19T11:15:39.495Z",
+  "finishedAt": "2026-04-19T11:15:39.495Z",
+  "value": {
+    "output": "Build passed. Strict TS compiles clean. 253KB main chunk.",
+    "success": true
+  }
+}
