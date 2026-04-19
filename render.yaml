@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: weekly-planner-frontend
+    runtime: static
+    plan: free
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_INSFORGE_BASE_URL
+        value: https://kqvj3q5t.eu-central.insforge.app
+      - key: VITE_INSFORGE_ANON_KEY
+        sync: false
+      - key: VITE_OPENCLAW_PROXY
+        fromService:
+          name: openclaw-proxy
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+    buildFilter:
+      paths:
+        - src/**
+        - package.json
+        - vite.config.ts
+        - index.html
+
+  - type: web
+    name: openclaw-proxy
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npx tsx server/webhook-server.ts
+    envVars:
+      - key: OPENCLAW_GATEWAY_URL
+        sync: false
+      - key: OPENCLAW_TOKEN
+        sync: false
+      - key: OPENCLAW_MODEL
+        value: openclaw
+      - key: CORS_ORIGIN
+        fromService:
+          name: weekly-planner-frontend
+          type: web
+          property: pullRequestPreviewURL
+      - key: WEBHOOK_PORT
+        value: "10000"
+    buildFilter:
+      paths:
+        - server/**
+        - package.json

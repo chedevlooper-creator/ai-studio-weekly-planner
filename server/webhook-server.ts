@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-const PORT = Number(process.env.WEBHOOK_PORT || 3001);
+const PORT = Number(process.env.PORT || process.env.WEBHOOK_PORT || 3001);
 const GATEWAY_URL = process.env.OPENCLAW_GATEWAY_URL || 'http://127.0.0.1:18789';
 const TOKEN = process.env.OPENCLAW_TOKEN || '';
 const MODEL = process.env.OPENCLAW_MODEL || 'openclaw';
@@ -222,6 +222,11 @@ app.get('/api/status', async (_req, res) => {
       url: GATEWAY_URL,
     });
   }
+});
+
+// ─── GET /health ───
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
 // ─── Başlat ───
