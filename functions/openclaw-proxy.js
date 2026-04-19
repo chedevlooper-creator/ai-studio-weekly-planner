@@ -5,25 +5,19 @@
  * Env: OPENCLAW_GATEWAY_URL, OPENCLAW_TOKEN, OPENCLAW_MODEL, CORS_ORIGIN
  */
 
-const GATEWAY_URL = Deno.env.get('OPENCLAW_GATEWAY_URL') || 'http://127.0.0.1:18789';
-const TOKEN = Deno.env.get('OPENCLAW_TOKEN') || '';
+const GATEWAY_URL = Deno.env.get('OPENCLAW_GATEWAY_URL') || 'https://covalently-nontragical-francina.ngrok-free.dev';
+const TOKEN = Deno.env.get('OPENCLAW_TOKEN') || 'a38907a648c9d3024ab74011b3bd2e2cfb9da2867668608f';
 const MODEL = Deno.env.get('OPENCLAW_MODEL') || 'openclaw';
 const CORS = Deno.env.get('CORS_ORIGIN') || '*';
+const IS_NGROK = GATEWAY_URL.includes('ngrok');
+const NGROK_H = IS_NGROK ? { 'ngrok-skip-browser-warning': 'true' } : {};
 
 function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': CORS,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Openclaw-Token',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
-}
-
-function resolveToken(request) {
-  if (TOKEN) return TOKEN;
-  const fromHeader = request.headers.get('X-Openclaw-Token') || '';
-  if (fromHeader) return fromHeader;
-  const auth = request.headers.get('Authorization') || '';
-  return auth.startsWith('Bearer ') ? auth.slice(7) : '';
 }
 
 function buildPayload(body) {
@@ -104,52 +98,31 @@ async function streamToClient(gatewayUrl, token, model, payload) {
 }
 
 module.exports = async function(request) {
-  const url = new URL(request.url);
-  const path = url.pathname;
-
   // CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: corsHeaders() });
   }
 
-  // GET /api/status
-  if (path === '/api/status' && request.method === 'GET') {
-    const token = resolveToken(request);
+  // GET → status check
+  if (request.method === 'GET') {
     try {
       const r = await fetch(`${GATEWAY_URL}/v1/models`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${TOKEN}`, ...NGROK_H },
       });
       return new Response(JSON.stringify({
         gateway: r.ok ? 'connected' : 'error',
         status: r.status,
-        url: GATEWAY_URL,
       }), { headers: { ...corsHeaders(), 'Content-Type': 'application/json' } });
     } catch (err) {
       return new Response(JSON.stringify({
         gateway: 'disconnected',
         error: err.message,
-        url: GATEWAY_URL,
       }), { headers: { ...corsHeaders(), 'Content-Type': 'application/json' } });
     }
   }
 
-  // POST /api/message/stream
-  if (path === '/api/message/stream' && request.method === 'POST') {
-    const token = resolveToken(request);
-    const body = await request.json().catch(() => ({}));
-    const payload = buildPayload(body);
-    if (!payload) {
-      return new Response(JSON.stringify({ error: 'text veya messages gerekli' }), {
-        status: 400,
-        headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
-      });
-    }
-    return streamToClient(GATEWAY_URL, token, MODEL, payload);
-  }
-
-  // POST /api/message (senkron)
-  if (path === '/api/message' && request.method === 'POST') {
-    const token = resolveToken(request);
+  // POST → message
+  if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
     const payload = buildPayload(body);
     if (!payload) {
@@ -163,7 +136,8 @@ module.exports = async function(request) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${TOKEN}`,
+          ...NGROK_H,
         },
         body: JSON.stringify({ model: MODEL, messages: payload, stream: false }),
       });
@@ -186,5 +160,5 @@ module.exports = async function(request) {
     }
   }
 
-  return new Response('Not Found', { status: 404, headers: corsHeaders() });
+  return new Response('Method not allowed', { status: 405, headers: corsHeaders() });
 };

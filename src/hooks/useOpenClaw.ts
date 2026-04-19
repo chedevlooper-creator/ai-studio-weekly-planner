@@ -3,6 +3,7 @@ import type { DayTasks } from '../types/plan';
 import type { AiTaskDraft } from '../lib/aiTaskDrafts';
 import { draftsFromAiJson, extractJsonObject } from '../lib/aiTaskDrafts';
 import { TEAM } from '../data/constants';
+import { getInsforgeClient } from '../lib/insforgeClient';
 
 export interface MessageAttachment {
   name: string;
@@ -41,9 +42,12 @@ export interface OpenClawPlanBridge {
   addTasksFromAiDrafts: (drafts: AiTaskDraft[]) => void;
 }
 
-const PROXY_API = (import.meta as any).env?.VITE_OPENCLAW_PROXY || 'http://127.0.0.1:3001';
+const PROXY_API = (import.meta as any).env?.VITE_OPENCLAW_PROXY || '';
 const HEALTH_INTERVAL_MS = 15_000;
 const NGROK_HEADERS: Record<string, string> = PROXY_API.includes('ngrok') ? { 'ngrok-skip-browser-warning': 'true' } : {};
+// In production (non-localhost), always use InsForge function to avoid CORS
+const IS_LOCALHOST = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+const USE_INSFORGE_FN = !PROXY_API || !IS_LOCALHOST;
 
 type ChatHistoryMsg = { role: 'system' | 'user' | 'assistant'; content: string };
 
@@ -121,10 +125,18 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
 
     const check = async () => {
       try {
-        const r = await fetch(`${PROXY_API}/api/status`, { headers: NGROK_HEADERS });
+        let data: any;
+        if (USE_INSFORGE_FN) {
+          const client = getInsforgeClient();
+          if (!client) { if (alive) setIsConnected(false); return; }
+          const res = await client.functions.invoke('openclaw-proxy', { method: 'GET' });
+          data = res.data;
+        } else {
+          const r = await fetch(`${PROXY_API}/api/status`, { headers: NGROK_HEADERS });
+          data = await r.json();
+        }
         if (!alive) return;
-        const data = await r.json();
-        setIsConnected(data.gateway === 'connected');
+        setIsConnected(data?.gateway === 'connected');
       } catch {
         if (alive) setIsConnected(false);
       }
@@ -209,18 +221,28 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
       abortRef.current = controller;
 
       try {
-        const res = await fetch(`${PROXY_API}/api/message`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
-          body: JSON.stringify({ messages: history }),
-          signal: controller.signal,
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.error || `HTTP ${res.status}`);
+        let data: { reply?: string; error?: string; detail?: string };
+        if (USE_INSFORGE_FN) {
+          const client = getInsforgeClient();
+          if (!client) throw new Error('InsForge client bulunamadı');
+          const res = await client.functions.invoke('openclaw-proxy', {
+            body: { messages: history },
+          });
+          if (res.error) throw new Error(res.error.message || 'Function hatası');
+          data = res.data;
+        } else {
+          const res = await fetch(`${PROXY_API}/api/message`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
+            body: JSON.stringify({ messages: history }),
+            signal: controller.signal,
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error || `HTTP ${res.status}`);
+          }
+          data = await res.json();
         }
-        const data: { reply?: string; error?: string; detail?: string } = await res.json();
         const reply = (data.reply || '').trim();
         if (reply) {
           finalizeAssistant(assistantId, { text: reply });

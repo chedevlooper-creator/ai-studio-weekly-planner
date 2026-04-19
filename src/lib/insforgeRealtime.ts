@@ -36,8 +36,8 @@ export interface PlanRealtimeHandle {
 
 type AnyRealtime = {
   connect: () => Promise<unknown>;
-  isConnected?: () => boolean;
-  subscribe: (channel: string) => Promise<{ error?: unknown }>;
+  isConnected: boolean;
+  subscribe: (channel: string) => Promise<{ ok?: boolean; error?: { message?: string } }>;
   unsubscribe: (channel: string) => void;
   publish: <T>(channel: string, event: string, payload: T) => Promise<void>;
   on: (event: string, listener: (payload: unknown) => void) => void;
@@ -70,12 +70,12 @@ export function subscribePlanChannel(
 
   const ready = (async () => {
     try {
-      if (!realtime.isConnected?.()) {
+      if (!realtime.isConnected) {
         await realtime.connect();
       }
       const res = await realtime.subscribe(channel);
-      if (res?.error) {
-        console.warn('Realtime subscribe failed:', res.error);
+      if (res && !res.ok) {
+        console.warn('Realtime subscribe failed:', res.error?.message);
         return false;
       }
       realtime.on(PLAN_UPDATED_EVENT, handler);
