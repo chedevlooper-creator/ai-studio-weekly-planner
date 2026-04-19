@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TEAM } from '../data/constants';
 import { initialPlanFromStorage, writeLocalPlan } from '../lib/localPlanStorage';
 import { readRemotePlan, writeRemotePlan } from '../lib/insforgePlanStorage';
+import { getInsforgeClient } from '../lib/insforgeClient';
 import { subscribePlanChannel, type PlanRealtimeHandle } from '../lib/insforgeRealtime';
 import { MAX_TASK_FILE_SIZE, TASK_FILES_BUCKET, uploadTaskFile } from '../lib/insforgeStorage';
 import { buildExportPayload, newTaskId, parseImportedJson } from '../lib/planSnapshot';
@@ -137,6 +138,10 @@ export function useWeeklyPlan(userId: string | null) {
 
   useEffect(() => {
     if (!remoteBootstrapped || !userId) return;
+    if (!getInsforgeClient()) {
+      setSyncStatus('local-only');
+      return;
+    }
     if (skipNextRemoteSaveRef.current) {
       skipNextRemoteSaveRef.current = false;
       return;
@@ -316,12 +321,11 @@ export function useWeeklyPlan(userId: string | null) {
     URL.revokeObjectURL(url);
   }, [snapshot, filter, weekStart]);
 
-  const importFromFile = useCallback((file: File) => {
-    file.text().then((text) => {
+  const importFromFile = useCallback((file: File): Promise<{ ok: true } | { ok: false; error: string }> => {
+    return file.text().then((text) => {
       const r = parseImportedJson(text);
       if (r.ok === false) {
-        window.alert(r.error);
-        return;
+        return { ok: false as const, error: r.error };
       }
       const s = r.snapshot;
       setData(s.days);
@@ -331,6 +335,7 @@ export function useWeeklyPlan(userId: string | null) {
       setExpandedDays(s.days.map((d) => d.day));
       setFilter('Tümü');
       setSearchQuery('');
+      return { ok: true as const };
     });
   }, []);
 

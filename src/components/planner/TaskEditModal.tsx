@@ -9,6 +9,9 @@ import { TEAM } from '../../data/constants';
 import { uploadTaskFile, TASK_FILES_BUCKET, MAX_TASK_FILE_SIZE } from '../../lib/insforgeStorage';
 import type { DayTasks, Priority, Status, Task, TaskAttachment } from '../../types/plan';
 import type { TaskModalState } from '../../hooks/useWeeklyPlan';
+import { useToast } from '../ui/Toast';
+import { Button } from '../ui/Button';
+import { Modal } from '../ui/Modal';
 
 const STATUSES: Status[] = ['Bekliyor', 'Devam Eden', 'Tamamlanan'];
 const PRIORITIES: Priority[] = ['Yüksek', 'Orta'];
@@ -40,6 +43,7 @@ export function TaskEditModal({
   const [attachments, setAttachments] = useState<TaskAttachment[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [moveToDayIndex, setMoveToDayIndex] = useState(0);
+  const toast = useToast();
 
   useEffect(() => {
     if (!modal) return;
@@ -114,11 +118,11 @@ export function TaskEditModal({
     const next: TaskAttachment[] = [];
     for (const file of Array.from(fileList)) {
       if (file.size > MAX_TASK_FILE_SIZE) {
-        window.alert(`${file.name} 5MB sınırını aşıyor.`);
+        toast.warning(`${file.name} 5MB sınırını aşıyor.`);
         continue;
       }
       if (!ownerId) {
-        window.alert('Dosya yüklemek için önce giriş yapın veya misafir modu açın.');
+        toast.error('Dosya yüklemek için önce giriş yapın veya misafir modu açın.');
         return;
       }
       try {
@@ -134,7 +138,7 @@ export function TaskEditModal({
         });
       } catch (error) {
         const msg = error instanceof Error ? error.message : 'Dosya yüklenemedi.';
-        window.alert(`${file.name}: ${msg}`);
+        toast.error(`${file.name}: ${msg}`);
       }
     }
     if (next.length) {
@@ -143,27 +147,12 @@ export function TaskEditModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center sm:p-4 print:hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="task-modal-title"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      style={{ animation: 'fadeIn 0.15s ease-out' }}
+    <Modal
+      open={!!modal}
+      onClose={onClose}
+      title={modal.mode === 'add' ? '✨ Yeni Görev' : '✏️ Görevi Düzenle'}
+      variant="bottom-sheet"
     >
-      <div
-        className="max-h-[95vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-white/[0.08] bg-surface-1 p-5 shadow-[0_-8px_48px_-12px_rgba(0,0,0,0.7)] sm:rounded-2xl sm:p-6"
-        onMouseDown={(e) => e.stopPropagation()}
-        style={{ animation: 'slideUp 0.2s ease-out' }}
-      >
-        {/* Handle bar */}
-        <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/10 sm:hidden" aria-hidden />
-        
-        <h2 id="task-modal-title" className="mb-5 font-display text-lg font-bold text-white">
-          {modal.mode === 'add' ? '✨ Yeni Görev' : '✏️ Görevi Düzenle'}
-        </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Day selector */}
           {modal.mode === 'add' && (
@@ -234,7 +223,7 @@ export function TaskEditModal({
                     onClick={() => toggleAssignee(m.id)}
                     className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all ${
                       active
-                        ? 'border-accent/30 bg-accent/10 text-white shadow-[0_0_12px_rgba(99,102,241,0.1)]'
+                        ? 'border-accent/30 bg-accent/10 text-white shadow-[0_0_12px_rgba(124,131,255,0.14)]'
                         : 'border-white/[0.06] bg-white/[0.02] text-neutral-500 hover:border-white/[0.12] hover:text-neutral-300'
                     }`}
                   >
@@ -317,32 +306,35 @@ export function TaskEditModal({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2 pt-2">
-            <button
+            <Button
               type="submit"
-              disabled={isSaving}
-              className="btn-primary flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="primary"
+              loading={isSaving}
+              className="flex-1 sm:flex-none"
             >
-              {isSaving ? 'Kaydediliyor...' : '💾 Kaydet'}
-            </button>
-            <button
+              💾 Kaydet
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               onClick={onClose}
-              className="btn-ghost flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none"
             >
               İptal
-            </button>
+            </Button>
             {modal.mode === 'edit' && (
-              <button
+              <Button
                 type="button"
+                variant="danger"
+                size="md"
                 onClick={() => onDelete(modal.dayIndex, modal.taskId)}
-                className="ml-auto px-4 py-2.5 text-sm font-medium text-rose-400 transition-colors hover:text-rose-300 hover:underline"
+                className="ml-auto"
               >
                 🗑️ Sil
-              </button>
+              </Button>
             )}
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }

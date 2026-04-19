@@ -1,0 +1,307 @@
+import { useState, useCallback, useEffect, useRef } from 'react';
+import type { DayTasks } from '../types/plan';
+import type { AiTaskDraft } from '../lib/aiTaskDrafts';
+import { draftsFromAiJson, extractJsonObject } from '../lib/aiTaskDrafts';
+import { TEAM } from '../data/constants';
+
+export interface MessageAttachment {
+  name: string;
+  size: number;
+  mimeType: string;
+  /** data URL for small files (images/text); omitted for larger files */
+  dataUrl?: string;
+  /** short inline text preview, for text-like files */
+  textPreview?: string;
+}
+
+export interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+  timestamp: Date;
+  attachments?: MessageAttachment[];
+  /** true while assistant message is still being streamed */
+  streaming?: boolean;
+}
+
+interface UseOpenClawResult {
+  messages: Message[];
+  sendMessage: (text: string, attachments?: MessageAttachment[]) => void;
+  stop: () => void;
+  isConnected: boolean;
+  isTyping: boolean;
+  isStreaming: boolean;
+}
+
+/** Haftalık plan bağlamı: AI mesajlarına eklenir ve JSON görev taslağı uygulanır. */
+export interface OpenClawPlanBridge {
+  data: DayTasks[];
+  weekLabel: string;
+  weekStart: string;
+  addTasksFromAiDrafts: (drafts: AiTaskDraft[]) => void;
+}
+
+const PROXY_API = (import.meta as any).env?.VITE_OPENCLAW_PROXY || 'http://127.0.0.1:3001';
+const HEALTH_INTERVAL_MS = 15_000;
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function buildMessageContent(text: string, attachments?: MessageAttachment[]): string {
+  if (!attachments || attachments.length === 0) return text;
+  const lines: string[] = [];
+  if (text.trim()) lines.push(text.trim());
+  lines.push('\n[Ekli dosyalar]');
+  for (const a of attachments) {
+    lines.push(`• ${a.name} (${a.mimeType || 'bilinmeyen'}, ${formatBytes(a.size)})`);
+    if (a.textPreview) {
+      const preview = a.textPreview.length > 1500 ? a.textPreview.slice(0, 1500) + '\n…' : a.textPreview;
+      lines.push('```');
+      lines.push(preview);
+      lines.push('```');
+    }
+  }
+  return lines.join('\n');
+}
+
+function buildPlanSystemMessage(ctx: OpenClawPlanBridge): string {
+  const validDays = ctx.data.map((d) => d.day).join(', ');
+  const teamNames = TEAM.map((m) => m.name).join(', ');
+  const compact = ctx.data.map((d) => ({
+    gün: d.day,
+    görevler: d.tasks.map((t) => ({
+      başlık: t.title,
+      durum: t.status,
+      öncelik: t.priority,
+      kişiler: t.assignees.map((a) => a.name),
+    })),
+  }));
+  let json = JSON.stringify(
+    { hafta: ctx.weekLabel, haftaBaşlangıcı: ctx.weekStart, günler: compact },
+    null,
+    2
+  );
+  if (json.length > 14_000) json = `${json.slice(0, 14_000)}\n…`;
+
+  return [
+    'Sen Kafkasder haftalık görev planı asistanısın. Kullanıcı Türkçe yazar; yanıtların kısa ve net olsun.',
+    `Geçerli gün adları (yalnızca bunları kullan): ${validDays}.`,
+    `Atanabilir ekip üyesi adları: ${teamNames}.`,
+    'Kullanıcıya yeni görev eklemen istenirse, yanıtının sonunda bir JSON kod bloğu ekle (```json ... ```). Şema: {"tasks":[{"day":"Salı","title":"Başlık","priority":"Yüksek"|"Orta","status":"Bekliyor"|"Devam Eden"|"Tamamlanan","assigneeNames":["Liman"]}]}.',
+    'Sadece gerçekten takvime işlenecek görevler için bu bloğu ekle; sohbet veya özet için ekleme.',
+    '',
+    'Mevcut plan:',
+    json,
+  ].join('\n');
+}
+
+export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const messagesRef = useRef<Message[]>([]);
+  const abortRef = useRef<AbortController | null>(null);
+  const planRef = useRef<OpenClawPlanBridge | null>(null);
+  planRef.current = plan;
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  // ─── Health check ───
+  useEffect(() => {
+    let alive = true;
+
+    const check = async () => {
+      try {
+        const r = await fetch(`${PROXY_API}/api/status`);
+        if (!alive) return;
+        const data = await r.json();
+        setIsConnected(data.gateway === 'connected');
+      } catch {
+        if (alive) setIsConnected(false);
+      }
+    };
+
+    check();
+    const id = setInterval(check, HEALTH_INTERVAL_MS);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
+
+  const appendDelta = useCallback((assistantId: string, delta: string) => {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === assistantId ? { ...m, text: m.text + delta } : m)),
+    );
+  }, []);
+
+  const tryApplyTaskDraftsFromText = useCallback((assistantText: string) => {
+    const ctx = planRef.current;
+    if (!ctx || !assistantText.includes('"tasks"')) return;
+    try {
+      const obj = extractJsonObject(assistantText);
+      const validDays = ctx.data.map((d) => d.day);
+      const drafts = draftsFromAiJson(obj, validDays);
+      if (drafts.length) ctx.addTasksFromAiDrafts(drafts);
+    } catch {
+      /* yapılandırılmış görev yok veya geçersiz JSON */
+    }
+  }, []);
+
+  const finalizeAssistant = useCallback((assistantId: string, patch?: Partial<Message>) => {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === assistantId ? { ...m, streaming: false, ...patch } : m)),
+    );
+  }, []);
+
+  const stop = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+  }, []);
+
+  const sendMessage = useCallback(
+    async (text: string, attachments?: MessageAttachment[]) => {
+      const hasAttachments = !!attachments && attachments.length > 0;
+      if (!text.trim() && !hasAttachments) return;
+
+      // Önceki bir akış varsa iptal et
+      abortRef.current?.abort();
+
+      const userMsg: Message = {
+        id: crypto.randomUUID(),
+        role: 'user',
+        text: text.trim() || (hasAttachments ? '(dosya gönderildi)' : ''),
+        timestamp: new Date(),
+        attachments,
+      };
+      const assistantId = crypto.randomUUID();
+      const assistantPlaceholder: Message = {
+        id: assistantId,
+        role: 'assistant',
+        text: '',
+        timestamp: new Date(),
+        streaming: true,
+      };
+
+      setMessages((prev) => [...prev, userMsg, assistantPlaceholder]);
+      setIsTyping(true);
+      setIsStreaming(true);
+
+      const systemPrompt = planRef.current ? buildPlanSystemMessage(planRef.current) : '';
+      const thread = [...messagesRef.current, userMsg].map((m) => ({
+        role: m.role as 'user' | 'assistant',
+        content: buildMessageContent(m.text, m.attachments),
+      }));
+      const history = systemPrompt
+        ? ([{ role: 'system' as const, content: systemPrompt }, ...thread] as { role: string; content: string }[])
+        : thread;
+
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      try {
+        const res = await fetch(`${PROXY_API}/api/message/stream`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+          body: JSON.stringify({ messages: history }),
+          signal: controller.signal,
+        });
+
+        if (!res.ok || !res.body) {
+          // Stream endpoint başarısızsa fallback: senkron /api/message
+          const fallback = await fetch(`${PROXY_API}/api/message`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: history }),
+            signal: controller.signal,
+          });
+          if (!fallback.ok) {
+            const err = await fallback.json().catch(() => ({}));
+            throw new Error(err.error || `HTTP ${fallback.status}`);
+          }
+          const data: { reply?: string } = await fallback.json();
+          const reply = (data.reply || '').trim() || '(Yanıt boş)';
+          finalizeAssistant(assistantId, { text: reply });
+          tryApplyTaskDraftsFromText(reply);
+          return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+        let gotAny = false;
+        let streamedForDrafts = '';
+
+        // İlk token geldiğinde typing göstergesini kapatabiliriz
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          let idx: number;
+          while ((idx = buffer.indexOf('\n\n')) !== -1) {
+            const chunk = buffer.slice(0, idx);
+            buffer = buffer.slice(idx + 2);
+            for (const line of chunk.split('\n')) {
+              if (!line.startsWith('data:')) continue;
+              const raw = line.slice(5).trim();
+              if (!raw) continue;
+              try {
+                const evt = JSON.parse(raw);
+                if (evt.error) {
+                  throw new Error(evt.error);
+                }
+                if (evt.done) {
+                  // bitti
+                }
+                if (typeof evt.delta === 'string' && evt.delta.length > 0) {
+                  gotAny = true;
+                  streamedForDrafts += evt.delta;
+                  setIsTyping(false);
+                  appendDelta(assistantId, evt.delta);
+                }
+              } catch (parseErr) {
+                // upstream zaten JSON değilse görmezden gel
+                if ((parseErr as Error).message && !(parseErr as SyntaxError).name?.includes('Syntax')) {
+                  throw parseErr;
+                }
+              }
+            }
+          }
+        }
+
+        if (!gotAny) {
+          finalizeAssistant(assistantId, { text: '(Yanıt boş)' });
+        } else {
+          finalizeAssistant(assistantId);
+          tryApplyTaskDraftsFromText(streamedForDrafts);
+        }
+      } catch (err: any) {
+        const aborted = err?.name === 'AbortError';
+        if (aborted) {
+          finalizeAssistant(assistantId, {
+            text: (messagesRef.current.find((m) => m.id === assistantId)?.text || '') + '\n\n⏹ Durduruldu',
+          });
+        } else {
+          console.error('[OpenClaw] Hata:', err);
+          finalizeAssistant(assistantId, {
+            text: `⚠️ ${err?.message || 'Bağlantı hatası'}`,
+          });
+        }
+      } finally {
+        if (abortRef.current === controller) abortRef.current = null;
+        setIsTyping(false);
+        setIsStreaming(false);
+      }
+    },
+    [appendDelta, finalizeAssistant, tryApplyTaskDraftsFromText],
+  );
+
+  return { messages, sendMessage, stop, isConnected, isTyping, isStreaming };
+}
