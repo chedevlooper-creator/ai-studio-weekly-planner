@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:43:21.172Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHPG5SCBKZYYKMMRZTZ5M5C",
+    "invocationKey": "ui-polish-cleanup-v2:S000001:cleanup-dead-code",
+    "invocationHash": "4e5044449bc12830e7ce6d543ecded330a27fda93ca3760b056d69375580e114",
+    "stepId": "S000001",
+    "taskId": "cleanup-dead-code",
+    "kind": "agent",
+    "label": "Remove dead/unused files and imports",
+    "taskDefRef": "tasks/01KPHPG5SCBKZYYKMMRZTZ5M5C/task.json"
+  },
+  "checksum": "e2f79f9641ccfab805db54db303141c1d58e0c04dc22b8be5a1ae34af3471e68"
+}

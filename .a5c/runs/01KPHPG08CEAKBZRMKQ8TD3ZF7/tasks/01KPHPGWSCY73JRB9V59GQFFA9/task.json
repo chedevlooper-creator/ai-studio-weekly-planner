@@ -1,0 +1,25 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "prompt": {
+      "instructions": [
+        "Replace window.alert(r.error) in importFromFile with a toast notification"
+      ],
+      "outputFormat": "JSON { fixed: string[] }",
+      "role": "Developer",
+      "task": "Fix the last window.alert in useWeeklyPlan.ts"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPHPGWSCY73JRB9V59GQFFA9/input.json",
+    "outputJsonPath": "tasks/01KPHPGWSCY73JRB9V59GQFFA9/output.json"
+  },
+  "kind": "agent",
+  "title": "Replace last window.alert with toast",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHPGWSCY73JRB9V59GQFFA9",
+  "taskId": "fix-remaining-alerts",
+  "invocationKey": "ui-polish-cleanup-v2:S000002:fix-remaining-alerts",
+  "stepId": "S000002",
+  "inputs": {}
+}

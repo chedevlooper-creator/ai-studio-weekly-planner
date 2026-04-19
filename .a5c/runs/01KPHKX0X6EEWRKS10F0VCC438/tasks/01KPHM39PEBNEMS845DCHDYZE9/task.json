@@ -1,0 +1,1143 @@
+{
+  "agent": {
+    "name": "react-developer",
+    "outputSchema": {
+      "required": [
+        "filesCreated",
+        "filesModified",
+        "summary"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "designPlan": {
+          "accessibilityStandards": {
+            "level": "WCAG 2.1 AA",
+            "requirements": [
+              "Color contrast: 4.5:1 normal text, 3:1 large text",
+              "Focus visible: 2px solid accent ring on all focusable elements",
+              "Focus trapping in modals, drawers, panels",
+              "Keyboard navigation: Tab, Enter, Space, Escape, Arrow keys",
+              "ARIA labels on all interactive elements",
+              "Live regions for dynamic content",
+              "Heading hierarchy h1-h6 without gaps",
+              "Skip-to-content link",
+              "Landmark roles: main, banner, nav, complementary",
+              "Keyboard shortcuts overlay on ? key"
+            ]
+          },
+          "animationPhilosophy": {
+            "catalog": [
+              "fadeIn: page sections, modals backdrop (250ms ease-out)",
+              "scaleIn: modals, dropdowns (250ms spring)",
+              "slideUp: bottom sheets, toasts (300ms spring)",
+              "slideRight: toast enter (300ms spring)",
+              "stagger: list items on expand (50ms delay per item, 200ms fadeIn)",
+              "completion: checkmark draw + subtle confetti burst (400ms)",
+              "shimmer: skeleton loading (3s infinite ease-in-out)",
+              "pulse: status indicators, waiting states (2s infinite)",
+              "pressScale: button press (100ms scale 0.97)",
+              "hoverLift: cards, interactive elements (200ms translateY -1px)"
+            ],
+            "principles": [
+              "Purposeful: every animation serves a UX goal (feedback, orientation, delight)",
+              "Performant: transform + opacity only, no layout triggers, 60fps always",
+              "Respectful: honor prefers-reduced-motion, provide instant alternatives",
+              "Consistent: same easing/duration for same type of motion across the app"
+            ]
+          },
+          "components": [
+            {
+              "name": "Button",
+              "sizes": [
+                "sm",
+                "md",
+                "lg"
+              ],
+              "states": [
+                "default",
+                "hover",
+                "active",
+                "disabled",
+                "loading"
+              ],
+              "variants": [
+                "primary",
+                "ghost",
+                "danger",
+                "icon-only"
+              ]
+            },
+            {
+              "features": [
+                "header slot",
+                "footer slot",
+                "hover elevation"
+              ],
+              "name": "Card",
+              "variants": [
+                "glass",
+                "solid",
+                "interactive"
+              ]
+            },
+            {
+              "features": [
+                "label",
+                "error",
+                "hint",
+                "icon-left",
+                "icon-right"
+              ],
+              "name": "Input",
+              "variants": [
+                "text",
+                "password",
+                "search",
+                "email"
+              ]
+            },
+            {
+              "features": [
+                "label",
+                "error",
+                "custom arrow"
+              ],
+              "name": "Select",
+              "variants": [
+                "native",
+                "custom"
+              ]
+            },
+            {
+              "features": [
+                "auto-resize",
+                "char count",
+                "label",
+                "error"
+              ],
+              "name": "Textarea"
+            },
+            {
+              "features": [
+                "focus trap",
+                "backdrop blur",
+                "scale animation",
+                "Escape close"
+              ],
+              "name": "Modal",
+              "variants": [
+                "dialog",
+                "bottom-sheet",
+                "drawer"
+              ]
+            },
+            {
+              "name": "Badge",
+              "sizes": [
+                "sm",
+                "md"
+              ],
+              "variants": [
+                "status",
+                "priority",
+                "count",
+                "dot"
+              ]
+            },
+            {
+              "features": [
+                "dismiss",
+                "undo action",
+                "progress bar",
+                "stacking"
+              ],
+              "name": "Toast",
+              "variants": [
+                "success",
+                "error",
+                "warning",
+                "info"
+              ]
+            },
+            {
+              "features": [
+                "positioning",
+                "delay",
+                "arrow",
+                "keyboard accessible"
+              ],
+              "name": "Tooltip"
+            },
+            {
+              "features": [
+                "sizes",
+                "status dot",
+                "AvatarGroup stacking"
+              ],
+              "name": "Avatar",
+              "variants": [
+                "initials",
+                "image"
+              ]
+            },
+            {
+              "features": [
+                "animated value transition",
+                "gradient",
+                "glow"
+              ],
+              "name": "Progress",
+              "variants": [
+                "linear-bar",
+                "ring"
+              ]
+            },
+            {
+              "features": [
+                "icon/illustration",
+                "title",
+                "description",
+                "action button"
+              ],
+              "name": "EmptyState"
+            },
+            {
+              "features": [
+                "shimmer animation"
+              ],
+              "name": "Skeleton",
+              "variants": [
+                "text",
+                "circle",
+                "card",
+                "avatar",
+                "button"
+              ]
+            },
+            {
+              "features": [
+                "trigger",
+                "portal menu",
+                "items with icons",
+                "keyboard nav"
+              ],
+              "name": "Dropdown"
+            },
+            {
+              "features": [
+                "horizontal",
+                "animated indicator",
+                "controlled/uncontrolled"
+              ],
+              "name": "Tabs"
+            },
+            {
+              "features": [
+                "switch animation",
+                "label",
+                "sizes"
+              ],
+              "name": "Toggle"
+            },
+            {
+              "features": [
+                "tooltip",
+                "sizes",
+                "variants matching Button"
+              ],
+              "name": "IconButton"
+            }
+          ],
+          "mobileStrategy": {
+            "breakpoints": {
+              "2xl": "1536px",
+              "lg": "1024px",
+              "md": "768px",
+              "sm": "640px",
+              "xl": "1280px"
+            },
+            "patterns": [
+              "Bottom sheet modals with drag-to-dismiss handle",
+              "Swipe gestures on task rows (right=complete, left=delete)",
+              "Floating Action Button with radial expand menu",
+              "Bottom tab navigation: Hafta, Takım, AI, Notlar",
+              "Sticky compact header on scroll with backdrop blur",
+              "Safe area insets for notch/island devices",
+              "Touch targets minimum 44x44px on all interactive elements"
+            ]
+          },
+          "phases": [
+            {
+              "dependencies": [],
+              "description": "Break App.tsx monolith into focused components with clean interfaces",
+              "id": 1,
+              "name": "Component Architecture Refactor"
+            },
+            {
+              "dependencies": [
+                1
+              ],
+              "description": "Token refinement + UI primitive component library",
+              "id": 2,
+              "name": "Design System Foundation"
+            },
+            {
+              "dependencies": [
+                2
+              ],
+              "description": "Micro-interactions, transitions, loading states, celebrations",
+              "id": 3,
+              "name": "Visual Polish & Animations"
+            },
+            {
+              "dependencies": [
+                2
+              ],
+              "description": "Bottom sheets, gestures, FAB, bottom nav, responsive polish",
+              "id": 4,
+              "name": "Mobile UX"
+            },
+            {
+              "dependencies": [
+                2,
+                3
+              ],
+              "description": "WCAG 2.1 AA compliance, keyboard nav, focus management, screen readers",
+              "id": 5,
+              "name": "Accessibility"
+            }
+          ],
+          "summary": "Complete design system overhaul for Kafkasder Weekly Planner. Elevate from functional glassmorphism to premium Linear/Things-inspired dark UI with refined tokens, component library, purposeful animations, and full accessibility.",
+          "tokens": {
+            "animation": {
+              "duration": {
+                "fast": "150ms",
+                "instant": "50ms",
+                "normal": "250ms",
+                "slow": "400ms",
+                "spring": "500ms"
+              },
+              "easing": {
+                "bounce": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+                "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+                "ease-in": "cubic-bezier(0.4, 0, 1, 1)",
+                "ease-out": "cubic-bezier(0, 0, 0.2, 1)",
+                "spring": "cubic-bezier(0.16, 1, 0.3, 1)"
+              }
+            },
+            "borderRadius": {
+              "2xl": "20px",
+              "DEFAULT": "8px",
+              "full": "9999px",
+              "lg": "12px",
+              "md": "10px",
+              "sm": "6px",
+              "xl": "16px"
+            },
+            "colors": {
+              "accent": {
+                "dark": "#4f46e5",
+                "DEFAULT": "#6366f1",
+                "glow": "rgba(99,102,241,0.15)",
+                "light": "#818cf8",
+                "subtle": "rgba(99,102,241,0.08)"
+              },
+              "border": {
+                "default": "rgba(255,255,255,0.06)",
+                "focus": "rgba(99,102,241,0.4)",
+                "medium": "rgba(255,255,255,0.08)",
+                "strong": "rgba(255,255,255,0.12)",
+                "subtle": "rgba(255,255,255,0.04)"
+              },
+              "overlay": {
+                "heavy": "rgba(255,255,255,0.16)",
+                "light": "rgba(255,255,255,0.04)",
+                "medium": "rgba(255,255,255,0.08)",
+                "strong": "rgba(255,255,255,0.12)",
+                "subtle": "rgba(255,255,255,0.02)"
+              },
+              "semantic": {
+                "danger": "#f87171",
+                "dangerSubtle": "rgba(248,113,113,0.1)",
+                "info": "#60a5fa",
+                "infoSubtle": "rgba(96,165,250,0.1)",
+                "success": "#34d399",
+                "successSubtle": "rgba(52,211,153,0.1)",
+                "warning": "#fbbf24",
+                "warningSubtle": "rgba(251,191,36,0.1)"
+              },
+              "surface": {
+                "0": "#06060b",
+                "1": "#0c0c14",
+                "2": "#12121e",
+                "3": "#1a1a2e",
+                "4": "#22223a"
+              }
+            },
+            "shadows": {
+              "DEFAULT": "0 1px 3px rgba(0,0,0,0.4), 0 4px 12px -4px rgba(0,0,0,0.35)",
+              "glass": "0 1px 1px rgba(0,0,0,0.3), 0 4px 16px -4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)",
+              "glow": "0 0 20px rgba(99,102,241,0.15), 0 0 60px rgba(99,102,241,0.05)",
+              "lg": "0 4px 16px rgba(0,0,0,0.45), 0 16px 48px -12px rgba(0,0,0,0.5)",
+              "md": "0 2px 8px rgba(0,0,0,0.4), 0 8px 24px -8px rgba(0,0,0,0.4)",
+              "sm": "0 1px 2px rgba(0,0,0,0.3)"
+            },
+            "spacing": {
+              "0": "0px",
+              "1": "4px",
+              "2": "8px",
+              "3": "12px",
+              "4": "16px",
+              "5": "20px",
+              "6": "24px",
+              "8": "32px",
+              "10": "40px",
+              "12": "48px",
+              "16": "64px",
+              "0.5": "2px",
+              "1.5": "6px"
+            },
+            "typography": {
+              "fontFamily": {
+                "display": "Space Grotesk, Inter, ui-sans-serif, system-ui, sans-serif",
+                "mono": "JetBrains Mono, ui-monospace, monospace",
+                "sans": "Inter, ui-sans-serif, system-ui, sans-serif"
+              },
+              "scale": {
+                "body": {
+                  "lineHeight": "22px",
+                  "size": "14px",
+                  "weight": 400
+                },
+                "body-lg": {
+                  "lineHeight": "26px",
+                  "size": "16px",
+                  "weight": 400
+                },
+                "body-medium": {
+                  "lineHeight": "22px",
+                  "size": "14px",
+                  "weight": 500
+                },
+                "body-sm": {
+                  "lineHeight": "18px",
+                  "size": "12px",
+                  "weight": 400
+                },
+                "caption": {
+                  "letterSpacing": "0.02em",
+                  "lineHeight": "14px",
+                  "size": "10px",
+                  "weight": 500
+                },
+                "display": {
+                  "fontFamily": "display",
+                  "lineHeight": "44px",
+                  "size": "36px",
+                  "weight": 800
+                },
+                "heading": {
+                  "fontFamily": "display",
+                  "lineHeight": "28px",
+                  "size": "20px",
+                  "weight": 700
+                },
+                "heading-lg": {
+                  "fontFamily": "display",
+                  "lineHeight": "36px",
+                  "size": "28px",
+                  "weight": 700
+                },
+                "heading-sm": {
+                  "fontFamily": "display",
+                  "lineHeight": "22px",
+                  "size": "16px",
+                  "weight": 700
+                },
+                "label": {
+                  "letterSpacing": "0.08em",
+                  "lineHeight": "16px",
+                  "size": "11px",
+                  "textTransform": "uppercase",
+                  "weight": 600
+                }
+              }
+            },
+            "zIndex": {
+              "dropdown": 50,
+              "modal": 200,
+              "sticky": 100,
+              "toast": 300,
+              "tooltip": 400
+            }
+          }
+        },
+        "plan": {
+          "components": [
+            {
+              "file": "src/components/layout/AppLayout.tsx",
+              "name": "AppLayout",
+              "props": "{ children: ReactNode }",
+              "responsibilities": "Main layout shell with background, max-width container, print header"
+            },
+            {
+              "file": "src/components/auth/AuthGate.tsx",
+              "name": "AuthGate",
+              "props": "{ children: ReactNode, onGuestMode: () => void }",
+              "responsibilities": "Loading spinner, login/signup form, guest mode button. Wraps children when authenticated."
+            },
+            {
+              "file": "src/components/header/AppHeader.tsx",
+              "name": "AppHeader",
+              "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+              "responsibilities": "Renders MobileHeader or DesktopHeader based on breakpoint"
+            },
+            {
+              "file": "src/components/header/MobileHeader.tsx",
+              "name": "MobileHeader",
+              "props": "{ auth, stats, syncStatus, onExport, onImport, fileInputRef }",
+              "responsibilities": "Compact mobile header with branding, action buttons, stats row, progress bar"
+            },
+            {
+              "file": "src/components/header/DesktopHeader.tsx",
+              "name": "DesktopHeader",
+              "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+              "responsibilities": "Full desktop header with branding badge, title, stat cards, session card, sync status, ring chart, team panel, action buttons"
+            },
+            {
+              "file": "src/components/header/SyncStatusIndicator.tsx",
+              "name": "SyncStatusIndicator",
+              "props": "{ status: SyncStatus, compact?: boolean }",
+              "responsibilities": "Sync status display (saving/saved/error/idle/local-only)"
+            },
+            {
+              "file": "src/components/header/StatsCards.tsx",
+              "name": "StatsCards",
+              "props": "{ stats: PlanStats }",
+              "responsibilities": "Three stat cards: Total, Completed, Completion Rate"
+            },
+            {
+              "file": "src/components/planner/FilterBar.tsx",
+              "name": "FilterBar",
+              "props": "{ filter, setFilter, searchQuery, setSearchQuery, searchInputRef }",
+              "responsibilities": "Filter select + search input bar"
+            },
+            {
+              "file": "src/components/planner/DayGrid.tsx",
+              "name": "DayGrid",
+              "props": "{ data, plan hooks, dragEnabled, sensors, handleDragEnd }",
+              "responsibilities": "DnD context wrapper + responsive grid of DaySection components"
+            },
+            {
+              "file": "src/components/planner/BottomPanels.tsx",
+              "name": "BottomPanels",
+              "props": "{ assigneeStats, reminders, onReminderChange }",
+              "responsibilities": "TeamPanel (mobile) + RemindersPanel"
+            },
+            {
+              "file": "src/components/header/PerformanceSection.tsx",
+              "name": "PerformanceSection",
+              "props": "{ stats: PlanStats }",
+              "responsibilities": "Performance summary with progress bar (desktop only)"
+            }
+          ],
+          "extractionOrder": [
+            "SyncStatusIndicator",
+            "StatsCards",
+            "PerformanceSection",
+            "MobileHeader",
+            "DesktopHeader",
+            "AppHeader",
+            "AuthGate",
+            "FilterBar",
+            "DayGrid",
+            "BottomPanels",
+            "AppLayout"
+          ],
+          "targetAppTsxSize": "~80 lines of pure composition"
+        }
+      },
+      "instructions": [
+        "Read src/App.tsx fully before making any changes",
+        "Extract components in the order specified by the plan",
+        "Create proper TypeScript interfaces for all props",
+        "Extract: AuthGate, AppHeader (mobile+desktop), FilterBar, DayGrid wrapper, BottomPanels",
+        "Create src/components/layout/AppLayout.tsx as the main layout shell",
+        "Create src/components/auth/AuthGate.tsx for login/signup screen",
+        "Create src/components/header/AppHeader.tsx with MobileHeader and DesktopHeader",
+        "Create src/components/header/SyncStatus.tsx, StatsCards.tsx, SessionCard.tsx",
+        "Create src/components/planner/FilterBar.tsx",
+        "Create src/components/planner/DayGrid.tsx (DnD wrapper)",
+        "Slim App.tsx to <100 lines — just composition of extracted components",
+        "Preserve ALL existing functionality — this is a refactor, not a rewrite",
+        "Run the TypeScript compiler to verify no type errors",
+        "Make sure all imports are correct and no circular dependencies exist"
+      ],
+      "outputFormat": "JSON with filesCreated, filesModified arrays and summary",
+      "role": "Senior React Developer",
+      "task": "Refactor the App.tsx monolith into clean, well-typed components following the architecture plan"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPHM39PEBNEMS845DCHDYZE9/input.json",
+    "outputJsonPath": "tasks/01KPHM39PEBNEMS845DCHDYZE9/output.json"
+  },
+  "kind": "agent",
+  "title": "Implement App.tsx component architecture refactor",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHM39PEBNEMS845DCHDYZE9",
+  "taskId": "implement-arch-refactor",
+  "invocationKey": "ui-ux-pro-max:S000005:implement-arch-refactor",
+  "stepId": "S000005",
+  "inputs": {
+    "designPlan": {
+      "accessibilityStandards": {
+        "level": "WCAG 2.1 AA",
+        "requirements": [
+          "Color contrast: 4.5:1 normal text, 3:1 large text",
+          "Focus visible: 2px solid accent ring on all focusable elements",
+          "Focus trapping in modals, drawers, panels",
+          "Keyboard navigation: Tab, Enter, Space, Escape, Arrow keys",
+          "ARIA labels on all interactive elements",
+          "Live regions for dynamic content",
+          "Heading hierarchy h1-h6 without gaps",
+          "Skip-to-content link",
+          "Landmark roles: main, banner, nav, complementary",
+          "Keyboard shortcuts overlay on ? key"
+        ]
+      },
+      "animationPhilosophy": {
+        "catalog": [
+          "fadeIn: page sections, modals backdrop (250ms ease-out)",
+          "scaleIn: modals, dropdowns (250ms spring)",
+          "slideUp: bottom sheets, toasts (300ms spring)",
+          "slideRight: toast enter (300ms spring)",
+          "stagger: list items on expand (50ms delay per item, 200ms fadeIn)",
+          "completion: checkmark draw + subtle confetti burst (400ms)",
+          "shimmer: skeleton loading (3s infinite ease-in-out)",
+          "pulse: status indicators, waiting states (2s infinite)",
+          "pressScale: button press (100ms scale 0.97)",
+          "hoverLift: cards, interactive elements (200ms translateY -1px)"
+        ],
+        "principles": [
+          "Purposeful: every animation serves a UX goal (feedback, orientation, delight)",
+          "Performant: transform + opacity only, no layout triggers, 60fps always",
+          "Respectful: honor prefers-reduced-motion, provide instant alternatives",
+          "Consistent: same easing/duration for same type of motion across the app"
+        ]
+      },
+      "components": [
+        {
+          "name": "Button",
+          "sizes": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "states": [
+            "default",
+            "hover",
+            "active",
+            "disabled",
+            "loading"
+          ],
+          "variants": [
+            "primary",
+            "ghost",
+            "danger",
+            "icon-only"
+          ]
+        },
+        {
+          "features": [
+            "header slot",
+            "footer slot",
+            "hover elevation"
+          ],
+          "name": "Card",
+          "variants": [
+            "glass",
+            "solid",
+            "interactive"
+          ]
+        },
+        {
+          "features": [
+            "label",
+            "error",
+            "hint",
+            "icon-left",
+            "icon-right"
+          ],
+          "name": "Input",
+          "variants": [
+            "text",
+            "password",
+            "search",
+            "email"
+          ]
+        },
+        {
+          "features": [
+            "label",
+            "error",
+            "custom arrow"
+          ],
+          "name": "Select",
+          "variants": [
+            "native",
+            "custom"
+          ]
+        },
+        {
+          "features": [
+            "auto-resize",
+            "char count",
+            "label",
+            "error"
+          ],
+          "name": "Textarea"
+        },
+        {
+          "features": [
+            "focus trap",
+            "backdrop blur",
+            "scale animation",
+            "Escape close"
+          ],
+          "name": "Modal",
+          "variants": [
+            "dialog",
+            "bottom-sheet",
+            "drawer"
+          ]
+        },
+        {
+          "name": "Badge",
+          "sizes": [
+            "sm",
+            "md"
+          ],
+          "variants": [
+            "status",
+            "priority",
+            "count",
+            "dot"
+          ]
+        },
+        {
+          "features": [
+            "dismiss",
+            "undo action",
+            "progress bar",
+            "stacking"
+          ],
+          "name": "Toast",
+          "variants": [
+            "success",
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        {
+          "features": [
+            "positioning",
+            "delay",
+            "arrow",
+            "keyboard accessible"
+          ],
+          "name": "Tooltip"
+        },
+        {
+          "features": [
+            "sizes",
+            "status dot",
+            "AvatarGroup stacking"
+          ],
+          "name": "Avatar",
+          "variants": [
+            "initials",
+            "image"
+          ]
+        },
+        {
+          "features": [
+            "animated value transition",
+            "gradient",
+            "glow"
+          ],
+          "name": "Progress",
+          "variants": [
+            "linear-bar",
+            "ring"
+          ]
+        },
+        {
+          "features": [
+            "icon/illustration",
+            "title",
+            "description",
+            "action button"
+          ],
+          "name": "EmptyState"
+        },
+        {
+          "features": [
+            "shimmer animation"
+          ],
+          "name": "Skeleton",
+          "variants": [
+            "text",
+            "circle",
+            "card",
+            "avatar",
+            "button"
+          ]
+        },
+        {
+          "features": [
+            "trigger",
+            "portal menu",
+            "items with icons",
+            "keyboard nav"
+          ],
+          "name": "Dropdown"
+        },
+        {
+          "features": [
+            "horizontal",
+            "animated indicator",
+            "controlled/uncontrolled"
+          ],
+          "name": "Tabs"
+        },
+        {
+          "features": [
+            "switch animation",
+            "label",
+            "sizes"
+          ],
+          "name": "Toggle"
+        },
+        {
+          "features": [
+            "tooltip",
+            "sizes",
+            "variants matching Button"
+          ],
+          "name": "IconButton"
+        }
+      ],
+      "mobileStrategy": {
+        "breakpoints": {
+          "2xl": "1536px",
+          "lg": "1024px",
+          "md": "768px",
+          "sm": "640px",
+          "xl": "1280px"
+        },
+        "patterns": [
+          "Bottom sheet modals with drag-to-dismiss handle",
+          "Swipe gestures on task rows (right=complete, left=delete)",
+          "Floating Action Button with radial expand menu",
+          "Bottom tab navigation: Hafta, Takım, AI, Notlar",
+          "Sticky compact header on scroll with backdrop blur",
+          "Safe area insets for notch/island devices",
+          "Touch targets minimum 44x44px on all interactive elements"
+        ]
+      },
+      "phases": [
+        {
+          "dependencies": [],
+          "description": "Break App.tsx monolith into focused components with clean interfaces",
+          "id": 1,
+          "name": "Component Architecture Refactor"
+        },
+        {
+          "dependencies": [
+            1
+          ],
+          "description": "Token refinement + UI primitive component library",
+          "id": 2,
+          "name": "Design System Foundation"
+        },
+        {
+          "dependencies": [
+            2
+          ],
+          "description": "Micro-interactions, transitions, loading states, celebrations",
+          "id": 3,
+          "name": "Visual Polish & Animations"
+        },
+        {
+          "dependencies": [
+            2
+          ],
+          "description": "Bottom sheets, gestures, FAB, bottom nav, responsive polish",
+          "id": 4,
+          "name": "Mobile UX"
+        },
+        {
+          "dependencies": [
+            2,
+            3
+          ],
+          "description": "WCAG 2.1 AA compliance, keyboard nav, focus management, screen readers",
+          "id": 5,
+          "name": "Accessibility"
+        }
+      ],
+      "summary": "Complete design system overhaul for Kafkasder Weekly Planner. Elevate from functional glassmorphism to premium Linear/Things-inspired dark UI with refined tokens, component library, purposeful animations, and full accessibility.",
+      "tokens": {
+        "animation": {
+          "duration": {
+            "fast": "150ms",
+            "instant": "50ms",
+            "normal": "250ms",
+            "slow": "400ms",
+            "spring": "500ms"
+          },
+          "easing": {
+            "bounce": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+            "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+            "ease-in": "cubic-bezier(0.4, 0, 1, 1)",
+            "ease-out": "cubic-bezier(0, 0, 0.2, 1)",
+            "spring": "cubic-bezier(0.16, 1, 0.3, 1)"
+          }
+        },
+        "borderRadius": {
+          "2xl": "20px",
+          "DEFAULT": "8px",
+          "full": "9999px",
+          "lg": "12px",
+          "md": "10px",
+          "sm": "6px",
+          "xl": "16px"
+        },
+        "colors": {
+          "accent": {
+            "dark": "#4f46e5",
+            "DEFAULT": "#6366f1",
+            "glow": "rgba(99,102,241,0.15)",
+            "light": "#818cf8",
+            "subtle": "rgba(99,102,241,0.08)"
+          },
+          "border": {
+            "default": "rgba(255,255,255,0.06)",
+            "focus": "rgba(99,102,241,0.4)",
+            "medium": "rgba(255,255,255,0.08)",
+            "strong": "rgba(255,255,255,0.12)",
+            "subtle": "rgba(255,255,255,0.04)"
+          },
+          "overlay": {
+            "heavy": "rgba(255,255,255,0.16)",
+            "light": "rgba(255,255,255,0.04)",
+            "medium": "rgba(255,255,255,0.08)",
+            "strong": "rgba(255,255,255,0.12)",
+            "subtle": "rgba(255,255,255,0.02)"
+          },
+          "semantic": {
+            "danger": "#f87171",
+            "dangerSubtle": "rgba(248,113,113,0.1)",
+            "info": "#60a5fa",
+            "infoSubtle": "rgba(96,165,250,0.1)",
+            "success": "#34d399",
+            "successSubtle": "rgba(52,211,153,0.1)",
+            "warning": "#fbbf24",
+            "warningSubtle": "rgba(251,191,36,0.1)"
+          },
+          "surface": {
+            "0": "#06060b",
+            "1": "#0c0c14",
+            "2": "#12121e",
+            "3": "#1a1a2e",
+            "4": "#22223a"
+          }
+        },
+        "shadows": {
+          "DEFAULT": "0 1px 3px rgba(0,0,0,0.4), 0 4px 12px -4px rgba(0,0,0,0.35)",
+          "glass": "0 1px 1px rgba(0,0,0,0.3), 0 4px 16px -4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)",
+          "glow": "0 0 20px rgba(99,102,241,0.15), 0 0 60px rgba(99,102,241,0.05)",
+          "lg": "0 4px 16px rgba(0,0,0,0.45), 0 16px 48px -12px rgba(0,0,0,0.5)",
+          "md": "0 2px 8px rgba(0,0,0,0.4), 0 8px 24px -8px rgba(0,0,0,0.4)",
+          "sm": "0 1px 2px rgba(0,0,0,0.3)"
+        },
+        "spacing": {
+          "0": "0px",
+          "1": "4px",
+          "2": "8px",
+          "3": "12px",
+          "4": "16px",
+          "5": "20px",
+          "6": "24px",
+          "8": "32px",
+          "10": "40px",
+          "12": "48px",
+          "16": "64px",
+          "0.5": "2px",
+          "1.5": "6px"
+        },
+        "typography": {
+          "fontFamily": {
+            "display": "Space Grotesk, Inter, ui-sans-serif, system-ui, sans-serif",
+            "mono": "JetBrains Mono, ui-monospace, monospace",
+            "sans": "Inter, ui-sans-serif, system-ui, sans-serif"
+          },
+          "scale": {
+            "body": {
+              "lineHeight": "22px",
+              "size": "14px",
+              "weight": 400
+            },
+            "body-lg": {
+              "lineHeight": "26px",
+              "size": "16px",
+              "weight": 400
+            },
+            "body-medium": {
+              "lineHeight": "22px",
+              "size": "14px",
+              "weight": 500
+            },
+            "body-sm": {
+              "lineHeight": "18px",
+              "size": "12px",
+              "weight": 400
+            },
+            "caption": {
+              "letterSpacing": "0.02em",
+              "lineHeight": "14px",
+              "size": "10px",
+              "weight": 500
+            },
+            "display": {
+              "fontFamily": "display",
+              "lineHeight": "44px",
+              "size": "36px",
+              "weight": 800
+            },
+            "heading": {
+              "fontFamily": "display",
+              "lineHeight": "28px",
+              "size": "20px",
+              "weight": 700
+            },
+            "heading-lg": {
+              "fontFamily": "display",
+              "lineHeight": "36px",
+              "size": "28px",
+              "weight": 700
+            },
+            "heading-sm": {
+              "fontFamily": "display",
+              "lineHeight": "22px",
+              "size": "16px",
+              "weight": 700
+            },
+            "label": {
+              "letterSpacing": "0.08em",
+              "lineHeight": "16px",
+              "size": "11px",
+              "textTransform": "uppercase",
+              "weight": 600
+            }
+          }
+        },
+        "zIndex": {
+          "dropdown": 50,
+          "modal": 200,
+          "sticky": 100,
+          "toast": 300,
+          "tooltip": 400
+        }
+      }
+    },
+    "plan": {
+      "components": [
+        {
+          "file": "src/components/layout/AppLayout.tsx",
+          "name": "AppLayout",
+          "props": "{ children: ReactNode }",
+          "responsibilities": "Main layout shell with background, max-width container, print header"
+        },
+        {
+          "file": "src/components/auth/AuthGate.tsx",
+          "name": "AuthGate",
+          "props": "{ children: ReactNode, onGuestMode: () => void }",
+          "responsibilities": "Loading spinner, login/signup form, guest mode button. Wraps children when authenticated."
+        },
+        {
+          "file": "src/components/header/AppHeader.tsx",
+          "name": "AppHeader",
+          "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+          "responsibilities": "Renders MobileHeader or DesktopHeader based on breakpoint"
+        },
+        {
+          "file": "src/components/header/MobileHeader.tsx",
+          "name": "MobileHeader",
+          "props": "{ auth, stats, syncStatus, onExport, onImport, fileInputRef }",
+          "responsibilities": "Compact mobile header with branding, action buttons, stats row, progress bar"
+        },
+        {
+          "file": "src/components/header/DesktopHeader.tsx",
+          "name": "DesktopHeader",
+          "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+          "responsibilities": "Full desktop header with branding badge, title, stat cards, session card, sync status, ring chart, team panel, action buttons"
+        },
+        {
+          "file": "src/components/header/SyncStatusIndicator.tsx",
+          "name": "SyncStatusIndicator",
+          "props": "{ status: SyncStatus, compact?: boolean }",
+          "responsibilities": "Sync status display (saving/saved/error/idle/local-only)"
+        },
+        {
+          "file": "src/components/header/StatsCards.tsx",
+          "name": "StatsCards",
+          "props": "{ stats: PlanStats }",
+          "responsibilities": "Three stat cards: Total, Completed, Completion Rate"
+        },
+        {
+          "file": "src/components/planner/FilterBar.tsx",
+          "name": "FilterBar",
+          "props": "{ filter, setFilter, searchQuery, setSearchQuery, searchInputRef }",
+          "responsibilities": "Filter select + search input bar"
+        },
+        {
+          "file": "src/components/planner/DayGrid.tsx",
+          "name": "DayGrid",
+          "props": "{ data, plan hooks, dragEnabled, sensors, handleDragEnd }",
+          "responsibilities": "DnD context wrapper + responsive grid of DaySection components"
+        },
+        {
+          "file": "src/components/planner/BottomPanels.tsx",
+          "name": "BottomPanels",
+          "props": "{ assigneeStats, reminders, onReminderChange }",
+          "responsibilities": "TeamPanel (mobile) + RemindersPanel"
+        },
+        {
+          "file": "src/components/header/PerformanceSection.tsx",
+          "name": "PerformanceSection",
+          "props": "{ stats: PlanStats }",
+          "responsibilities": "Performance summary with progress bar (desktop only)"
+        }
+      ],
+      "extractionOrder": [
+        "SyncStatusIndicator",
+        "StatsCards",
+        "PerformanceSection",
+        "MobileHeader",
+        "DesktopHeader",
+        "AppHeader",
+        "AuthGate",
+        "FilterBar",
+        "DayGrid",
+        "BottomPanels",
+        "AppLayout"
+      ],
+      "targetAppTsxSize": "~80 lines of pure composition"
+    }
+  }
+}

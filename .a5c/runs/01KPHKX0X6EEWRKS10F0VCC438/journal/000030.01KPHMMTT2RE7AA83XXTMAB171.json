@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:10:56.578Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHMMTRXQMHZACV9XKVGGT8H",
+    "invocationKey": "ui-ux-pro-max:S000015:final-quality-scoring",
+    "invocationHash": "8658e3d62909af5fea3b31adf2d4a19b2d0c654606710781925951d0b114c16f",
+    "stepId": "S000015",
+    "taskId": "final-quality-scoring",
+    "kind": "agent",
+    "label": "Final UI/UX quality scoring",
+    "taskDefRef": "tasks/01KPHMMTRXQMHZACV9XKVGGT8H/task.json"
+  },
+  "checksum": "be4ce1c27d12031473d46905b6eaf00d4988988fb801ecf1a0064658ab46772b"
+}

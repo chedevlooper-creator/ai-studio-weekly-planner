@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T02:55:31.155Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHTMA9DSEXK5DQ2V1GZB9H2",
+    "invocationKey": "mobile-ux-accessibility-refactor:S000001:audit-and-plan",
+    "invocationHash": "a8f22dd68c9042b9ba0b637f27103d4bcb0cdc07352a7e9f9ac647ffd8f42947",
+    "stepId": "S000001",
+    "taskId": "audit-and-plan",
+    "kind": "agent",
+    "label": "Audit the app and create a prioritized mobile UX + accessibility refactor plan",
+    "taskDefRef": "tasks/01KPHTMA9DSEXK5DQ2V1GZB9H2/task.json"
+  },
+  "checksum": "f0120b40b9d3769a488a7b1e1e4157cf011780ce5a7485def98348251304b66f"
+}

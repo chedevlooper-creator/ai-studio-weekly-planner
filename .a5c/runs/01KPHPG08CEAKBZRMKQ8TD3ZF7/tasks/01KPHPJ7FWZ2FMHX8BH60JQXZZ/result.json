@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPHPJ7FWZ2FMHX8BH60JQXZZ",
+  "taskId": "integrate-modal",
+  "invocationKey": "ui-polish-cleanup-v2:S000003:integrate-modal",
+  "status": "ok",
+  "result": {
+    "changes": [
+      "TaskEditModal now uses Modal primitive with built-in focus trap, Escape close, backdrop blur, bottom-sheet variant on mobile"
+    ]
+  },
+  "startedAt": "2026-04-19T01:45:17.342Z",
+  "finishedAt": "2026-04-19T01:45:17.342Z",
+  "value": {
+    "changes": [
+      "TaskEditModal now uses Modal primitive with built-in focus trap, Escape close, backdrop blur, bottom-sheet variant on mobile"
+    ]
+  }
+}

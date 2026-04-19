@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:09:40.076Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHMJG27ZV5896QZMY1EGT5J",
+    "invocationKey": "ui-ux-pro-max:S000012:verify-build",
+    "invocationHash": "3582777c9ae113808e1b7930cdb300555ef8666f4d8870f3a88d280c470f28b5",
+    "stepId": "S000012",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build: mobile-ux",
+    "taskDefRef": "tasks/01KPHMJG27ZV5896QZMY1EGT5J/task.json"
+  },
+  "checksum": "2fc4d9d74d66377dc2c9241e1d0201c3c024ca124562daa2d629e522f153191f"
+}

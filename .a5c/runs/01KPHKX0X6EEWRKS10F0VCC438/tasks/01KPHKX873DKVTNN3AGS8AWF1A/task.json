@@ -1,0 +1,63 @@
+{
+  "agent": {
+    "name": "frontend-architect",
+    "outputSchema": {
+      "required": [
+        "scores",
+        "recommendations",
+        "topImprovements"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "description": "Kafkasder Weekly Planner - React+Vite+Tailwind v4 dark glassmorphism theme",
+        "filesToReview": [
+          "src/App.tsx",
+          "src/index.css",
+          "src/components/planner/TaskRow.tsx",
+          "src/components/planner/DaySection.tsx",
+          "src/components/planner/TaskEditModal.tsx",
+          "src/components/planner/AIAssistant.tsx",
+          "src/components/planner/TeamPanel.tsx",
+          "src/components/planner/RemindersPanel.tsx",
+          "src/components/planner/ProgressRing.tsx",
+          "src/components/planner/Badge.tsx",
+          "src/components/planner/LuxuryCard.tsx",
+          "src/components/planner/FilePreviewModal.tsx"
+        ],
+        "projectRoot": "."
+      },
+      "instructions": [
+        "Read and analyze ALL listed files thoroughly",
+        "Evaluate: visual hierarchy, spacing consistency, color usage, typography",
+        "Evaluate: component architecture (App.tsx is 30KB monolith)",
+        "Evaluate: mobile responsiveness, touch targets, gesture support",
+        "Evaluate: accessibility (ARIA, focus management, keyboard nav, contrast)",
+        "Evaluate: animation/transition quality, loading states, error states",
+        "Evaluate: design system consistency (are tokens used consistently?)",
+        "Score each area 0-100 and provide specific improvement recommendations",
+        "Identify the TOP 10 highest-impact improvements",
+        "Note: Turkish language UI (Kafkasder = organization name)"
+      ],
+      "outputFormat": "JSON with scores object, recommendations array, and topImprovements array",
+      "role": "Senior UX/UI Auditor and Frontend Architect",
+      "task": "Perform a comprehensive audit of the current Kafkasder Weekly Planner UI/UX"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPHKX873DKVTNN3AGS8AWF1A/input.json",
+    "outputJsonPath": "tasks/01KPHKX873DKVTNN3AGS8AWF1A/output.json"
+  },
+  "kind": "agent",
+  "title": "Audit current UI/UX state",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHKX873DKVTNN3AGS8AWF1A",
+  "taskId": "audit-current-ui",
+  "invocationKey": "ui-ux-pro-max:S000001:audit-current-ui",
+  "stepId": "S000001",
+  "inputs": {
+    "description": "Kafkasder Weekly Planner - React+Vite+Tailwind v4 dark glassmorphism theme",
+    "projectRoot": "."
+  }
+}

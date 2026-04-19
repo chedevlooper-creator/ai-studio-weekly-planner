@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPHKX873DKVTNN3AGS8AWF1A",
+  "taskId": "audit-current-ui",
+  "invocationKey": "ui-ux-pro-max:S000001:audit-current-ui",
+  "status": "ok",
+  "result": {
+    "recommendations": [
+      {
+        "area": "componentArchitecture",
+        "impact": "high",
+        "issue": "App.tsx is a 30KB monolith (~780 lines) containing auth gate, header (mobile+desktop), filter bar, day grid, modals, and all state management inline",
+        "recommendation": "Extract into focused components: AuthGate, AppHeader, MobileHeader, DesktopHeader, StatsCards, SessionCard, SyncStatus, FilterBar, DayGrid, BottomPanels. App.tsx should be <100 lines of composition only."
+      },
+      {
+        "area": "componentArchitecture",
+        "impact": "high",
+        "issue": "No reusable UI primitive library — Button, Card, Input, Modal are styled inline with repeated Tailwind classes",
+        "recommendation": "Create src/components/ui/ with Button, Card, Input, Select, Textarea, Modal, Toast, Tooltip, Dropdown, Avatar, AvatarGroup, Skeleton, EmptyState, Toggle, Tabs, IconButton components"
+      },
+      {
+        "area": "accessibility",
+        "impact": "high",
+        "issue": "No focus trapping in modals (TaskEditModal, FilePreviewModal, AIAssistant). Escape handler exists but focus is not trapped.",
+        "recommendation": "Implement useFocusTrap hook and apply to all modal/panel components. Add focus restoration on close."
+      },
+      {
+        "area": "accessibility",
+        "impact": "high",
+        "issue": "Missing skip-to-content link, no landmark roles (main, nav, banner), heading hierarchy has gaps",
+        "recommendation": "Add <a href='#main-content'>Skip to content</a> as first element. Add role='main', role='banner', role='complementary'. Fix heading hierarchy."
+      },
+      {
+        "area": "accessibility",
+        "impact": "high",
+        "issue": "Some interactive elements have insufficient touch targets (<44px). Small icon buttons (p-1.5 = ~30px) fail WCAG.",
+        "recommendation": "Ensure all touch targets are minimum 44x44px. Use min-h-[44px] min-w-[44px] on mobile."
+      },
+      {
+        "area": "mobileResponsiveness",
+        "impact": "high",
+        "issue": "TaskEditModal uses bottom-sheet pattern on mobile (good) but lacks drag-to-dismiss handle gesture. No swipe gestures on task rows.",
+        "recommendation": "Add drag-to-dismiss on TaskEditModal. Implement swipe-right-to-complete and swipe-left-to-delete gestures on TaskRow. Add FAB for quick task creation."
+      },
+      {
+        "area": "loadingErrorStates",
+        "impact": "high",
+        "issue": "Only auth loading has a spinner. No skeleton states for plan loading, no error boundaries, no empty states with helpful illustrations",
+        "recommendation": "Add Skeleton components for plan loading state. Add EmptyState with illustrations for empty days. Add error boundary with retry. Add toast notifications for errors."
+      },
+      {
+        "area": "spacingConsistency",
+        "impact": "medium",
+        "issue": "Inconsistent spacing values: mix of px-2, px-3, px-4, px-5, px-6, px-8 without a clear scale. Gap values vary (gap-1.5, gap-2, gap-2.5, gap-3, gap-4, gap-5, gap-6, gap-8)",
+        "recommendation": "Define a strict 4px spacing scale in design tokens. Standardize: xs=4px, sm=8px, md=12px, lg=16px, xl=24px, 2xl=32px, 3xl=48px. Apply consistently."
+      },
+      {
+        "area": "typographySystem",
+        "impact": "medium",
+        "issue": "Font sizes are inconsistent: text-[8px], text-[9px], text-[10px], text-[11px], text-[12px], text-[13px], text-[15px] arbitrary values. No clear type scale.",
+        "recommendation": "Define typography scale tokens: caption=10px, body-sm=12px, body=14px, body-lg=16px, heading-sm=18px, heading=24px, heading-lg=32px, display=40px"
+      },
+      {
+        "area": "designSystemConsistency",
+        "impact": "medium",
+        "issue": "Glass panel styles duplicated across components. btn-primary and btn-ghost defined in CSS but not as React components. Badge component exists but many badges are inline-styled.",
+        "recommendation": "Consolidate all UI patterns into the component library. Replace inline glass-panel divs with Card component. Replace inline buttons with Button component."
+      },
+      {
+        "area": "animationQuality",
+        "impact": "medium",
+        "issue": "Good foundation with shimmer, gradientShift, fadeIn, scaleIn keyframes. But no staggered list animations, no completion celebration, no page transitions.",
+        "recommendation": "Add staggered animations for task list expand (stagger 50ms per item). Add confetti/checkmark animation on task completion. Add smooth view transitions."
+      },
+      {
+        "area": "colorUsage",
+        "impact": "medium",
+        "issue": "Good accent color system (indigo/violet) but neutral colors use magic numbers: white/[0.04], white/[0.06], white/[0.08], etc. Hard to maintain consistency.",
+        "recommendation": "Define surface overlay tokens: overlay-subtle=white/[0.02], overlay-light=white/[0.04], overlay-medium=white/[0.08], overlay-strong=white/[0.12]. Use semantic names."
+      },
+      {
+        "area": "mobileResponsiveness",
+        "impact": "medium",
+        "issue": "No bottom navigation for mobile. Mobile users must scroll to access AI assistant, team panel, and reminders.",
+        "recommendation": "Add mobile bottom tab bar with: Hafta (calendar), Takım (users), AI (bot), Notlar (notes) navigation. Collapse into tabbed views on mobile."
+      },
+      {
+        "area": "accessibility",
+        "impact": "low",
+        "issue": "No keyboard shortcut system. / for search exists but no discoverable overlay. No Ctrl+N for new task.",
+        "recommendation": "Implement useKeyboardShortcuts hook. Add keyboard shortcut overlay on ? key press. Support: / search, Ctrl+N new task, Escape close modal, Arrow keys in lists."
+      },
+      {
+        "area": "animationQuality",
+        "impact": "low",
+        "issue": "prefers-reduced-motion support exists but only zeros out durations. No fallback behavior defined.",
+        "recommendation": "Keep reduced-motion support. Add instant-transition fallback so state changes still feel responsive without animation."
+      }
+    ],
+    "scores": {
+      "accessibility": 45,
+      "animationQuality": 68,
+      "colorUsage": 78,
+      "componentArchitecture": 35,
+      "designSystemConsistency": 55,
+      "loadingErrorStates": 40,
+      "mobileResponsiveness": 60,
+      "spacingConsistency": 65,
+      "typographySystem": 70,
+      "visualHierarchy": 72
+    },
+    "topImprovements": [
+      "1. REFACTOR APP.TSX MONOLITH: Break 30KB App.tsx into focused components (AuthGate, AppHeader, FilterBar, DayGrid). Critical for maintainability.",
+      "2. BUILD COMPONENT LIBRARY: Create src/components/ui/ with Button, Card, Input, Modal, Toast, Skeleton, etc. Eliminates style duplication.",
+      "3. ADD FOCUS TRAPPING: Implement useFocusTrap for modals and panels. Major accessibility gap.",
+      "4. SKELETON LOADING STATES: Add skeleton screens for plan loading and empty states with illustrations. Currently jarring transitions.",
+      "5. MOBILE SWIPE GESTURES: Swipe-to-complete and swipe-to-delete on TaskRow. Bottom sheet drag-to-dismiss. Essential for mobile UX.",
+      "6. STANDARDIZE SPACING/TYPOGRAPHY: Define strict design token scales. Currently using 15+ arbitrary pixel values for fonts.",
+      "7. ADD TOAST NOTIFICATION SYSTEM: Replace window.alert() calls with proper toast notifications with undo support.",
+      "8. KEYBOARD NAVIGATION & SHORTCUTS: Full keyboard nav with discoverable shortcut overlay. Add focus management.",
+      "9. MOBILE BOTTOM NAVIGATION: Add tab bar for mobile with Hafta/Takım/AI/Notlar sections.",
+      "10. MICRO-ANIMATIONS: Staggered list animations, task completion celebration, smooth view transitions. Polish to premium level."
+    ]
+  },
+  "startedAt": "2026-04-19T00:59:31.402Z",
+  "finishedAt": "2026-04-19T00:59:31.402Z",
+  "value": {
+    "recommendations": [
+      {
+        "area": "componentArchitecture",
+        "impact": "high",
+        "issue": "App.tsx is a 30KB monolith (~780 lines) containing auth gate, header (mobile+desktop), filter bar, day grid, modals, and all state management inline",
+        "recommendation": "Extract into focused components: AuthGate, AppHeader, MobileHeader, DesktopHeader, StatsCards, SessionCard, SyncStatus, FilterBar, DayGrid, BottomPanels. App.tsx should be <100 lines of composition only."
+      },
+      {
+        "area": "componentArchitecture",
+        "impact": "high",
+        "issue": "No reusable UI primitive library — Button, Card, Input, Modal are styled inline with repeated Tailwind classes",
+        "recommendation": "Create src/components/ui/ with Button, Card, Input, Select, Textarea, Modal, Toast, Tooltip, Dropdown, Avatar, AvatarGroup, Skeleton, EmptyState, Toggle, Tabs, IconButton components"
+      },
+      {
+        "area": "accessibility",
+        "impact": "high",
+        "issue": "No focus trapping in modals (TaskEditModal, FilePreviewModal, AIAssistant). Escape handler exists but focus is not trapped.",
+        "recommendation": "Implement useFocusTrap hook and apply to all modal/panel components. Add focus restoration on close."
+      },
+      {
+        "area": "accessibility",
+        "impact": "high",
+        "issue": "Missing skip-to-content link, no landmark roles (main, nav, banner), heading hierarchy has gaps",
+        "recommendation": "Add <a href='#main-content'>Skip to content</a> as first element. Add role='main', role='banner', role='complementary'. Fix heading hierarchy."
+      },
+      {
+        "area": "accessibility",
+        "impact": "high",
+        "issue": "Some interactive elements have insufficient touch targets (<44px). Small icon buttons (p-1.5 = ~30px) fail WCAG.",
+        "recommendation": "Ensure all touch targets are minimum 44x44px. Use min-h-[44px] min-w-[44px] on mobile."
+      },
+      {
+        "area": "mobileResponsiveness",
+        "impact": "high",
+        "issue": "TaskEditModal uses bottom-sheet pattern on mobile (good) but lacks drag-to-dismiss handle gesture. No swipe gestures on task rows.",
+        "recommendation": "Add drag-to-dismiss on TaskEditModal. Implement swipe-right-to-complete and swipe-left-to-delete gestures on TaskRow. Add FAB for quick task creation."
+      },
+      {
+        "area": "loadingErrorStates",
+        "impact": "high",
+        "issue": "Only auth loading has a spinner. No skeleton states for plan loading, no error boundaries, no empty states with helpful illustrations",
+        "recommendation": "Add Skeleton components for plan loading state. Add EmptyState with illustrations for empty days. Add error boundary with retry. Add toast notifications for errors."
+      },
+      {
+        "area": "spacingConsistency",
+        "impact": "medium",
+        "issue": "Inconsistent spacing values: mix of px-2, px-3, px-4, px-5, px-6, px-8 without a clear scale. Gap values vary (gap-1.5, gap-2, gap-2.5, gap-3, gap-4, gap-5, gap-6, gap-8)",
+        "recommendation": "Define a strict 4px spacing scale in design tokens. Standardize: xs=4px, sm=8px, md=12px, lg=16px, xl=24px, 2xl=32px, 3xl=48px. Apply consistently."
+      },
+      {
+        "area": "typographySystem",
+        "impact": "medium",
+        "issue": "Font sizes are inconsistent: text-[8px], text-[9px], text-[10px], text-[11px], text-[12px], text-[13px], text-[15px] arbitrary values. No clear type scale.",
+        "recommendation": "Define typography scale tokens: caption=10px, body-sm=12px, body=14px, body-lg=16px, heading-sm=18px, heading=24px, heading-lg=32px, display=40px"
+      },
+      {
+        "area": "designSystemConsistency",
+        "impact": "medium",
+        "issue": "Glass panel styles duplicated across components. btn-primary and btn-ghost defined in CSS but not as React components. Badge component exists but many badges are inline-styled.",
+        "recommendation": "Consolidate all UI patterns into the component library. Replace inline glass-panel divs with Card component. Replace inline buttons with Button component."
+      },
+      {
+        "area": "animationQuality",
+        "impact": "medium",
+        "issue": "Good foundation with shimmer, gradientShift, fadeIn, scaleIn keyframes. But no staggered list animations, no completion celebration, no page transitions.",
+        "recommendation": "Add staggered animations for task list expand (stagger 50ms per item). Add confetti/checkmark animation on task completion. Add smooth view transitions."
+      },
+      {
+        "area": "colorUsage",
+        "impact": "medium",
+        "issue": "Good accent color system (indigo/violet) but neutral colors use magic numbers: white/[0.04], white/[0.06], white/[0.08], etc. Hard to maintain consistency.",
+        "recommendation": "Define surface overlay tokens: overlay-subtle=white/[0.02], overlay-light=white/[0.04], overlay-medium=white/[0.08], overlay-strong=white/[0.12]. Use semantic names."
+      },
+      {
+        "area": "mobileResponsiveness",
+        "impact": "medium",
+        "issue": "No bottom navigation for mobile. Mobile users must scroll to access AI assistant, team panel, and reminders.",
+        "recommendation": "Add mobile bottom tab bar with: Hafta (calendar), Takım (users), AI (bot), Notlar (notes) navigation. Collapse into tabbed views on mobile."
+      },
+      {
+        "area": "accessibility",
+        "impact": "low",
+        "issue": "No keyboard shortcut system. / for search exists but no discoverable overlay. No Ctrl+N for new task.",
+        "recommendation": "Implement useKeyboardShortcuts hook. Add keyboard shortcut overlay on ? key press. Support: / search, Ctrl+N new task, Escape close modal, Arrow keys in lists."
+      },
+      {
+        "area": "animationQuality",
+        "impact": "low",
+        "issue": "prefers-reduced-motion support exists but only zeros out durations. No fallback behavior defined.",
+        "recommendation": "Keep reduced-motion support. Add instant-transition fallback so state changes still feel responsive without animation."
+      }
+    ],
+    "scores": {
+      "accessibility": 45,
+      "animationQuality": 68,
+      "colorUsage": 78,
+      "componentArchitecture": 35,
+      "designSystemConsistency": 55,
+      "loadingErrorStates": 40,
+      "mobileResponsiveness": 60,
+      "spacingConsistency": 65,
+      "typographySystem": 70,
+      "visualHierarchy": 72
+    },
+    "topImprovements": [
+      "1. REFACTOR APP.TSX MONOLITH: Break 30KB App.tsx into focused components (AuthGate, AppHeader, FilterBar, DayGrid). Critical for maintainability.",
+      "2. BUILD COMPONENT LIBRARY: Create src/components/ui/ with Button, Card, Input, Modal, Toast, Skeleton, etc. Eliminates style duplication.",
+      "3. ADD FOCUS TRAPPING: Implement useFocusTrap for modals and panels. Major accessibility gap.",
+      "4. SKELETON LOADING STATES: Add skeleton screens for plan loading and empty states with illustrations. Currently jarring transitions.",
+      "5. MOBILE SWIPE GESTURES: Swipe-to-complete and swipe-to-delete on TaskRow. Bottom sheet drag-to-dismiss. Essential for mobile UX.",
+      "6. STANDARDIZE SPACING/TYPOGRAPHY: Define strict design token scales. Currently using 15+ arbitrary pixel values for fonts.",
+      "7. ADD TOAST NOTIFICATION SYSTEM: Replace window.alert() calls with proper toast notifications with undo support.",
+      "8. KEYBOARD NAVIGATION & SHORTCUTS: Full keyboard nav with discoverable shortcut overlay. Add focus management.",
+      "9. MOBILE BOTTOM NAVIGATION: Add tab bar for mobile with Hafta/Takım/AI/Notlar sections.",
+      "10. MICRO-ANIMATIONS: Staggered list animations, task completion celebration, smooth view transitions. Polish to premium level."
+    ]
+  }
+}

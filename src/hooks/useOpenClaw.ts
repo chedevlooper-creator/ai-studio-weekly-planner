@@ -43,6 +43,7 @@ export interface OpenClawPlanBridge {
 
 const PROXY_API = (import.meta as any).env?.VITE_OPENCLAW_PROXY || 'http://127.0.0.1:3001';
 const HEALTH_INTERVAL_MS = 15_000;
+const NGROK_HEADERS: Record<string, string> = PROXY_API.includes('ngrok') ? { 'ngrok-skip-browser-warning': 'true' } : {};
 
 type ChatHistoryMsg = { role: 'system' | 'user' | 'assistant'; content: string };
 
@@ -120,7 +121,7 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
 
     const check = async () => {
       try {
-        const r = await fetch(`${PROXY_API}/api/status`);
+        const r = await fetch(`${PROXY_API}/api/status`, { headers: NGROK_HEADERS });
         if (!alive) return;
         const data = await r.json();
         setIsConnected(data.gateway === 'connected');
@@ -208,85 +209,31 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
       abortRef.current = controller;
 
       try {
-        const res = await fetch(`${PROXY_API}/api/message/stream`, {
+        const res = await fetch(`${PROXY_API}/api/message`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+          headers: { 'Content-Type': 'application/json', ...NGROK_HEADERS },
           body: JSON.stringify({ messages: history }),
           signal: controller.signal,
         });
 
-        if (!res.ok || !res.body) {
-          // Stream endpoint başarısızsa fallback: senkron /api/message
-          const fallback = await fetch(`${PROXY_API}/api/message`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: history }),
-            signal: controller.signal,
-          });
-          if (!fallback.ok) {
-            const err = await fallback.json().catch(() => ({}));
-            throw new Error(err.error || `HTTP ${fallback.status}`);
-          }
-          const data: { reply?: string } = await fallback.json();
-          const reply = (data.reply || '').trim() || '(Yanıt boş)';
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+        const data: { reply?: string; error?: string; detail?: string } = await res.json();
+        const reply = (data.reply || '').trim();
+        if (reply) {
           finalizeAssistant(assistantId, { text: reply });
           tryApplyTaskDraftsFromText(reply);
-          return;
-        }
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let buffer = '';
-        let gotAny = false;
-        let streamedForDrafts = '';
-
-        // İlk token geldiğinde typing göstergesini kapatabiliriz
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-
-          let idx: number;
-          while ((idx = buffer.indexOf('\n\n')) !== -1) {
-            const chunk = buffer.slice(0, idx);
-            buffer = buffer.slice(idx + 2);
-            for (const line of chunk.split('\n')) {
-              if (!line.startsWith('data:')) continue;
-              const raw = line.slice(5).trim();
-              if (!raw) continue;
-              try {
-                const evt = JSON.parse(raw);
-                if (evt.error) {
-                  throw new Error(evt.error);
-                }
-                if (evt.done) {
-                  // bitti
-                }
-                if (typeof evt.delta === 'string' && evt.delta.length > 0) {
-                  gotAny = true;
-                  streamedForDrafts += evt.delta;
-                  setIsTyping(false);
-                  appendDelta(assistantId, evt.delta);
-                }
-              } catch (parseErr) {
-                // upstream zaten JSON değilse görmezden gel
-                if ((parseErr as Error).message && !(parseErr as SyntaxError).name?.includes('Syntax')) {
-                  throw parseErr;
-                }
-              }
-            }
-          }
-        }
-
-        if (!gotAny) {
-          finalizeAssistant(assistantId, { text: '(Yanıt boş)' });
+        } else if (data.error) {
+          throw new Error(data.detail ? `${data.error}\n${data.detail.slice(0, 800)}` : data.error);
         } else {
-          finalizeAssistant(assistantId);
-          tryApplyTaskDraftsFromText(streamedForDrafts);
+          finalizeAssistant(assistantId, {
+            text: '(Yanıt boş) — Gateway yanıt vermedi.',
+          });
         }
       } catch (err: any) {
-        const aborted = err?.name === 'AbortError';
-        if (aborted) {
+        if (err?.name === 'AbortError') {
           finalizeAssistant(assistantId, {
             text: (messagesRef.current.find((m) => m.id === assistantId)?.text || '') + '\n\n⏹ Durduruldu',
           });

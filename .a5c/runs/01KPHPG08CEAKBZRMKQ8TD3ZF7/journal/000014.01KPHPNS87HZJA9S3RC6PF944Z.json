@@ -1,0 +1,9 @@
+{
+  "type": "RUN_COMPLETED",
+  "recordedAt": "2026-04-19T01:46:24.903Z",
+  "data": {
+    "harness": "pi",
+    "outputRef": "state/output.json"
+  },
+  "checksum": "b966c8d7b3bf444639f18e2eb0e08ccb65d9ab94ea68150ab2dcac78a01d46bf"
+}

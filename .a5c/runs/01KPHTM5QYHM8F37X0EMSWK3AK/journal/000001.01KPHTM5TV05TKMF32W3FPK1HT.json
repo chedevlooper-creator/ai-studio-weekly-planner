@@ -1,0 +1,16 @@
+{
+  "type": "RUN_CREATED",
+  "recordedAt": "2026-04-19T02:55:26.555Z",
+  "data": {
+    "runId": "01KPHTM5QYHM8F37X0EMSWK3AK",
+    "processId": "mobile-ux-accessibility-refactor",
+    "entrypoint": {
+      "importPath": "../../processes/mobile-ux-accessibility-refactor.js",
+      "exportName": "process"
+    },
+    "harness": "pi",
+    "inputsRef": "inputs.json",
+    "prompt": "Refactor this app for mobile UX and accessibility"
+  },
+  "checksum": "51e9f3bb72783952e7019b81c0777edb217c60d7c62b5cd9af8e5f1ab5e0f597"
+}

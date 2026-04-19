@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:04:39.758Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHM9AS1DTNBQJNR89Q5ZQS2",
+    "invocationKey": "ui-ux-pro-max:S000006:verify-build",
+    "invocationHash": "9620c17ceac2237279ab5bfe6d77e53beb2fa2c735ad478ed65d93da66bafe66",
+    "stepId": "S000006",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build: architecture-refactor",
+    "taskDefRef": "tasks/01KPHM9AS1DTNBQJNR89Q5ZQS2/task.json"
+  },
+  "checksum": "ee099a4630e708e3f70dd1e64c99374c8dc55d198324bc2d73be0755e6e73c9f"
+}

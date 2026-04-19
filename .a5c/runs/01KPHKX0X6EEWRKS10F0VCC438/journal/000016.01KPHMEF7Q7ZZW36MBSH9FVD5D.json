@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:07:28.119Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHMEF6JRKMDN4HYS4YBK4MT",
+    "invocationKey": "ui-ux-pro-max:S000008:verify-build",
+    "invocationHash": "fda1fa4ef3743d296ad10e6498df7acf9609662a67d67c86e6f13b767cd0d763",
+    "stepId": "S000008",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build: design-system",
+    "taskDefRef": "tasks/01KPHMEF6JRKMDN4HYS4YBK4MT/task.json"
+  },
+  "checksum": "a410dcd442248a82d12d2d5720183045a5959e451c63f660e5e5a541f43fff83"
+}

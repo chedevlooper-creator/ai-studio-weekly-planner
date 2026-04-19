@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPHM2CKKF3DKWX4QZM7P143W",
+  "taskId": "plan-arch-refactor",
+  "invocationKey": "ui-ux-pro-max:S000004:plan-arch-refactor",
+  "status": "ok",
+  "result": {
+    "components": [
+      {
+        "file": "src/components/layout/AppLayout.tsx",
+        "name": "AppLayout",
+        "props": "{ children: ReactNode }",
+        "responsibilities": "Main layout shell with background, max-width container, print header"
+      },
+      {
+        "file": "src/components/auth/AuthGate.tsx",
+        "name": "AuthGate",
+        "props": "{ children: ReactNode, onGuestMode: () => void }",
+        "responsibilities": "Loading spinner, login/signup form, guest mode button. Wraps children when authenticated."
+      },
+      {
+        "file": "src/components/header/AppHeader.tsx",
+        "name": "AppHeader",
+        "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+        "responsibilities": "Renders MobileHeader or DesktopHeader based on breakpoint"
+      },
+      {
+        "file": "src/components/header/MobileHeader.tsx",
+        "name": "MobileHeader",
+        "props": "{ auth, stats, syncStatus, onExport, onImport, fileInputRef }",
+        "responsibilities": "Compact mobile header with branding, action buttons, stats row, progress bar"
+      },
+      {
+        "file": "src/components/header/DesktopHeader.tsx",
+        "name": "DesktopHeader",
+        "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+        "responsibilities": "Full desktop header with branding badge, title, stat cards, session card, sync status, ring chart, team panel, action buttons"
+      },
+      {
+        "file": "src/components/header/SyncStatusIndicator.tsx",
+        "name": "SyncStatusIndicator",
+        "props": "{ status: SyncStatus, compact?: boolean }",
+        "responsibilities": "Sync status display (saving/saved/error/idle/local-only)"
+      },
+      {
+        "file": "src/components/header/StatsCards.tsx",
+        "name": "StatsCards",
+        "props": "{ stats: PlanStats }",
+        "responsibilities": "Three stat cards: Total, Completed, Completion Rate"
+      },
+      {
+        "file": "src/components/planner/FilterBar.tsx",
+        "name": "FilterBar",
+        "props": "{ filter, setFilter, searchQuery, setSearchQuery, searchInputRef }",
+        "responsibilities": "Filter select + search input bar"
+      },
+      {
+        "file": "src/components/planner/DayGrid.tsx",
+        "name": "DayGrid",
+        "props": "{ data, plan hooks, dragEnabled, sensors, handleDragEnd }",
+        "responsibilities": "DnD context wrapper + responsive grid of DaySection components"
+      },
+      {
+        "file": "src/components/planner/BottomPanels.tsx",
+        "name": "BottomPanels",
+        "props": "{ assigneeStats, reminders, onReminderChange }",
+        "responsibilities": "TeamPanel (mobile) + RemindersPanel"
+      },
+      {
+        "file": "src/components/header/PerformanceSection.tsx",
+        "name": "PerformanceSection",
+        "props": "{ stats: PlanStats }",
+        "responsibilities": "Performance summary with progress bar (desktop only)"
+      }
+    ],
+    "extractionOrder": [
+      "SyncStatusIndicator",
+      "StatsCards",
+      "PerformanceSection",
+      "MobileHeader",
+      "DesktopHeader",
+      "AppHeader",
+      "AuthGate",
+      "FilterBar",
+      "DayGrid",
+      "BottomPanels",
+      "AppLayout"
+    ],
+    "targetAppTsxSize": "~80 lines of pure composition"
+  },
+  "startedAt": "2026-04-19T01:01:16.642Z",
+  "finishedAt": "2026-04-19T01:01:16.642Z",
+  "value": {
+    "components": [
+      {
+        "file": "src/components/layout/AppLayout.tsx",
+        "name": "AppLayout",
+        "props": "{ children: ReactNode }",
+        "responsibilities": "Main layout shell with background, max-width container, print header"
+      },
+      {
+        "file": "src/components/auth/AuthGate.tsx",
+        "name": "AuthGate",
+        "props": "{ children: ReactNode, onGuestMode: () => void }",
+        "responsibilities": "Loading spinner, login/signup form, guest mode button. Wraps children when authenticated."
+      },
+      {
+        "file": "src/components/header/AppHeader.tsx",
+        "name": "AppHeader",
+        "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+        "responsibilities": "Renders MobileHeader or DesktopHeader based on breakpoint"
+      },
+      {
+        "file": "src/components/header/MobileHeader.tsx",
+        "name": "MobileHeader",
+        "props": "{ auth, stats, syncStatus, onExport, onImport, fileInputRef }",
+        "responsibilities": "Compact mobile header with branding, action buttons, stats row, progress bar"
+      },
+      {
+        "file": "src/components/header/DesktopHeader.tsx",
+        "name": "DesktopHeader",
+        "props": "{ auth, activeUserId, stats, assigneeStats, syncStatus, onExport, onImport, fileInputRef }",
+        "responsibilities": "Full desktop header with branding badge, title, stat cards, session card, sync status, ring chart, team panel, action buttons"
+      },
+      {
+        "file": "src/components/header/SyncStatusIndicator.tsx",
+        "name": "SyncStatusIndicator",
+        "props": "{ status: SyncStatus, compact?: boolean }",
+        "responsibilities": "Sync status display (saving/saved/error/idle/local-only)"
+      },
+      {
+        "file": "src/components/header/StatsCards.tsx",
+        "name": "StatsCards",
+        "props": "{ stats: PlanStats }",
+        "responsibilities": "Three stat cards: Total, Completed, Completion Rate"
+      },
+      {
+        "file": "src/components/planner/FilterBar.tsx",
+        "name": "FilterBar",
+        "props": "{ filter, setFilter, searchQuery, setSearchQuery, searchInputRef }",
+        "responsibilities": "Filter select + search input bar"
+      },
+      {
+        "file": "src/components/planner/DayGrid.tsx",
+        "name": "DayGrid",
+        "props": "{ data, plan hooks, dragEnabled, sensors, handleDragEnd }",
+        "responsibilities": "DnD context wrapper + responsive grid of DaySection components"
+      },
+      {
+        "file": "src/components/planner/BottomPanels.tsx",
+        "name": "BottomPanels",
+        "props": "{ assigneeStats, reminders, onReminderChange }",
+        "responsibilities": "TeamPanel (mobile) + RemindersPanel"
+      },
+      {
+        "file": "src/components/header/PerformanceSection.tsx",
+        "name": "PerformanceSection",
+        "props": "{ stats: PlanStats }",
+        "responsibilities": "Performance summary with progress bar (desktop only)"
+      }
+    ],
+    "extractionOrder": [
+      "SyncStatusIndicator",
+      "StatsCards",
+      "PerformanceSection",
+      "MobileHeader",
+      "DesktopHeader",
+      "AppHeader",
+      "AuthGate",
+      "FilterBar",
+      "DayGrid",
+      "BottomPanels",
+      "AppLayout"
+    ],
+    "targetAppTsxSize": "~80 lines of pure composition"
+  }
+}

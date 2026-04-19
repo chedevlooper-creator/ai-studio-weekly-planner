@@ -1,0 +1,25 @@
+{
+  "agent": {
+    "name": "general-purpose",
+    "prompt": {
+      "instructions": [
+        "Check spacing, consistency, transitions across all components"
+      ],
+      "outputFormat": "JSON { improvements: string[] }",
+      "role": "UI designer",
+      "task": "Final polish pass on all components"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPHPKY9CRAZNFTPD4612MVAX/input.json",
+    "outputJsonPath": "tasks/01KPHPKY9CRAZNFTPD4612MVAX/output.json"
+  },
+  "kind": "agent",
+  "title": "Final visual polish pass",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHPKY9CRAZNFTPD4612MVAX",
+  "taskId": "visual-polish",
+  "invocationKey": "ui-polish-cleanup-v2:S000005:visual-polish",
+  "stepId": "S000005",
+  "inputs": {}
+}

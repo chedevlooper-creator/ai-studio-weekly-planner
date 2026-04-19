@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T00:59:35.696Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHM01TZHS6HMKSS2VZNC6KR",
+    "invocationKey": "ui-ux-pro-max:S000002:create-design-plan",
+    "invocationHash": "9e0db6ebc3012506cda1be6c1a43324bdb21134182e546de239138a9a97d3f73",
+    "stepId": "S000002",
+    "taskId": "create-design-plan",
+    "kind": "agent",
+    "label": "Create comprehensive design system plan",
+    "taskDefRef": "tasks/01KPHM01TZHS6HMKSS2VZNC6KR/task.json"
+  },
+  "checksum": "b7662914ab91f602a157abfb7093ed7238cbd9b48eb67a4ffcc3562f914e0c50"
+}

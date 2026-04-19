@@ -1,0 +1,16 @@
+{
+  "runId": "01KPHTM5QYHM8F37X0EMSWK3AK",
+  "request": "mobile-ux-accessibility-refactor",
+  "processId": "mobile-ux-accessibility-refactor",
+  "harness": "pi",
+  "entrypoint": {
+    "importPath": "../../processes/mobile-ux-accessibility-refactor.js",
+    "exportName": "process"
+  },
+  "processPath": "../../processes/mobile-ux-accessibility-refactor.js",
+  "layoutVersion": "2026.01-storage-preview",
+  "createdAt": "2026-04-19T02:55:26.493Z",
+  "prompt": "Refactor this app for mobile UX and accessibility",
+  "nonInteractive": true,
+  "completionProof": "b5ad9f001c80638aa9172637131ee3fd"
+}

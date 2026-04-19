@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T03:04:15.684Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHV4AGZC8FR0VYBDGNWDTRG",
+    "invocationKey": "mobile-ux-accessibility-refactor:S000004:verify-build",
+    "invocationHash": "b28fb0b9521b8f1d8bb66aaad19a0896c0d999e2b9d244cdf5c15f88727a7938",
+    "stepId": "S000004",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build and type safety (post-refactor)",
+    "taskDefRef": "tasks/01KPHV4AGZC8FR0VYBDGNWDTRG/task.json"
+  },
+  "checksum": "7956cde71ad817adb0997517f97de701b6d3b8bb4331ad01a8286d1b438ca1a4"
+}

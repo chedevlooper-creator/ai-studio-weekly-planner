@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:08:29.299Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHMGAYF6ES2JFJDER5T1422",
+    "invocationKey": "ui-ux-pro-max:S000010:verify-build",
+    "invocationHash": "af91a50e6bb2bdb0569d78b896e6b6dbe2eee20f3bdb895326a67287278e44b2",
+    "stepId": "S000010",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build: visual-polish",
+    "taskDefRef": "tasks/01KPHMGAYF6ES2JFJDER5T1422/task.json"
+  },
+  "checksum": "9083a019227c62a4c8df808bf8a95760fb9e32206baf092fe95685b1c8d2065a"
+}

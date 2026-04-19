@@ -1,0 +1,15 @@
+{
+  "runId": "01KPHPG08CEAKBZRMKQ8TD3ZF7",
+  "request": "ui-polish-cleanup-v2",
+  "processId": "ui-polish-cleanup-v2",
+  "harness": "pi",
+  "entrypoint": {
+    "importPath": "../../processes/ui-polish-cleanup.js",
+    "exportName": "process"
+  },
+  "processPath": "../../processes/ui-polish-cleanup.js",
+  "layoutVersion": "2026.01-storage-preview",
+  "createdAt": "2026-04-19T01:43:15.503Z",
+  "prompt": "Clean up dead code, integrate UI primitives, fix alerts, final polish",
+  "completionProof": "db48653c6536fb2898b6e498f169e6e9"
+}

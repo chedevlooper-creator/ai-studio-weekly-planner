@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T00:58:03.910Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHKX873DKVTNN3AGS8AWF1A",
+    "invocationKey": "ui-ux-pro-max:S000001:audit-current-ui",
+    "invocationHash": "a19d619223f2627bd3e328eeacaaf1c8c43937d8648170451b86461f3a9096b4",
+    "stepId": "S000001",
+    "taskId": "audit-current-ui",
+    "kind": "agent",
+    "label": "Audit current UI/UX state",
+    "taskDefRef": "tasks/01KPHKX873DKVTNN3AGS8AWF1A/task.json"
+  },
+  "checksum": "79830889697a52788453ae352a0a0a6244f8d2adf6ad95200f2642b8e6e3b95d"
+}

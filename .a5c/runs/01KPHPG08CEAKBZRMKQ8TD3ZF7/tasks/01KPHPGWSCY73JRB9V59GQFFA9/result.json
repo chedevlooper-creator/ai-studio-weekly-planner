@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPHPGWSCY73JRB9V59GQFFA9",
+  "taskId": "fix-remaining-alerts",
+  "invocationKey": "ui-polish-cleanup-v2:S000002:fix-remaining-alerts",
+  "status": "ok",
+  "result": {
+    "fixed": [
+      "useWeeklyPlan.ts: window.alert → onError callback with toast in App.tsx"
+    ]
+  },
+  "startedAt": "2026-04-19T01:44:27.932Z",
+  "finishedAt": "2026-04-19T01:44:27.932Z",
+  "value": {
+    "fixed": [
+      "useWeeklyPlan.ts: window.alert → onError callback with toast in App.tsx"
+    ]
+  }
+}

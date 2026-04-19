@@ -1,0 +1,87 @@
+{
+  "summary": "The app already has a strong visual foundation and some accessibility intent, but the mobile experience is still cramped in key flows and several interaction/accessibility details are incomplete. The highest-impact issues are: undersized mobile action controls in the header/task rows/navigation, inconsistent safe-area handling for fixed mobile UI, a mobile AI tab that does not map to actual in-app content, search/filter/form controls that rely too heavily on placeholders or compact visual treatment, and modal/overlay behavior that needs stronger focus management and mobile ergonomics. The refactor should stay within the current architecture and improve existing components rather than rewrite the planner.",
+  "priorities": [
+    {
+      "title": "Fix mobile navigation, fixed actions, and safe-area ergonomics",
+      "reason": "The bottom nav, AI assistant trigger, FAB, toast placement, and page bottom spacing can overlap or feel disconnected on small screens. The mobile AI tab currently has no dedicated content path in App.tsx, which makes the nav misleading.",
+      "files": [
+        "src/App.tsx",
+        "src/components/planner/MobileBottomNav.tsx",
+        "src/components/planner/FloatingActionButton.tsx",
+        "src/components/planner/AIAssistant.tsx",
+        "src/components/ui/Toast.tsx",
+        "src/index.css"
+      ]
+    },
+    {
+      "title": "Increase touch target size and reduce cramped mobile controls",
+      "reason": "Several mobile controls are visually elegant but too compact for comfortable thumb use, especially in MobileHeader, FilterBar, TaskRow action buttons, and some icon-only controls.",
+      "files": [
+        "src/components/header/MobileHeader.tsx",
+        "src/components/planner/FilterBar.tsx",
+        "src/components/planner/TaskRow.tsx",
+        "src/components/planner/DaySection.tsx",
+        "src/components/ui/Button.tsx",
+        "src/index.css"
+      ]
+    },
+    {
+      "title": "Improve mobile form/dialog usability",
+      "reason": "TaskEditModal already uses a bottom-sheet variant, but the form still feels dense on mobile and the modal helper behavior can be improved for focus, scrolling, and clearer affordances.",
+      "files": [
+        "src/components/planner/TaskEditModal.tsx",
+        "src/components/ui/Modal.tsx",
+        "src/components/ui/Input.tsx",
+        "src/index.css"
+      ]
+    },
+    {
+      "title": "Strengthen semantics, labels, and keyboard/focus accessibility",
+      "reason": "The app has a skip link and some aria-labels, but there are still gaps around landmark labeling, search labeling, dialog focus lifecycle, focus-visible treatment, and keyboard clarity for action-heavy controls.",
+      "files": [
+        "src/App.tsx",
+        "src/components/planner/FilterBar.tsx",
+        "src/components/planner/TaskRow.tsx",
+        "src/components/ui/Modal.tsx",
+        "src/components/ui/Button.tsx",
+        "src/index.css"
+      ]
+    },
+    {
+      "title": "Refine overlay and live-feedback accessibility",
+      "reason": "The AI assistant and toast system need better mobile/accessibility behavior, including safer placement, clearer semantics, and stronger interaction handling in constrained viewports.",
+      "files": [
+        "src/components/planner/AIAssistant.tsx",
+        "src/components/ui/Toast.tsx",
+        "src/index.css"
+      ]
+    }
+  ],
+  "filesToChange": [
+    "src/App.tsx",
+    "src/index.css",
+    "src/components/header/MobileHeader.tsx",
+    "src/components/planner/FilterBar.tsx",
+    "src/components/planner/TaskRow.tsx",
+    "src/components/planner/DaySection.tsx",
+    "src/components/planner/TaskEditModal.tsx",
+    "src/components/planner/MobileBottomNav.tsx",
+    "src/components/planner/FloatingActionButton.tsx",
+    "src/components/planner/AIAssistant.tsx",
+    "src/components/ui/Modal.tsx",
+    "src/components/ui/Button.tsx",
+    "src/components/ui/Input.tsx",
+    "src/components/ui/Toast.tsx"
+  ],
+  "acceptanceChecklist": [
+    "Mobile bottom navigation maps cleanly to visible content/states and no tab feels dead or misleading.",
+    "Fixed mobile UI respects safe-area insets and does not clash with the FAB, AI trigger, bottom nav, or toast stack.",
+    "Primary mobile controls and icon buttons meet comfortable touch-target sizing and spacing expectations.",
+    "Filter/search/task actions remain easy to use on narrow screens without feeling cramped or visually noisy.",
+    "Task edit flow works as a mobile-friendly bottom sheet with solid spacing, scrolling, and dismissal behavior.",
+    "Search, action buttons, nav controls, and dialog controls have clear accessible names and visible focus states.",
+    "Dialog focus is trapped while open and focus is restored appropriately when closed.",
+    "Reduced-motion and keyboard-friendly behavior remain intact after the refactor.",
+    "npm run lint and npm run build pass after the refactor."
+  ]
+}

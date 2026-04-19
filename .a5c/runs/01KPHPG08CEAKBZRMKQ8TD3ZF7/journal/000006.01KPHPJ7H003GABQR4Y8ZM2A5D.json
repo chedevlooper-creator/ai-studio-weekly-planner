@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:44:28.448Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHPJ7FWZ2FMHX8BH60JQXZZ",
+    "invocationKey": "ui-polish-cleanup-v2:S000003:integrate-modal",
+    "invocationHash": "476cfc97e904475690315f4933e33bdc5d10fdd209cb53dbdd4efd921a3a5e06",
+    "stepId": "S000003",
+    "taskId": "integrate-modal",
+    "kind": "agent",
+    "label": "Integrate Modal primitive into TaskEditModal",
+    "taskDefRef": "tasks/01KPHPJ7FWZ2FMHX8BH60JQXZZ/task.json"
+  },
+  "checksum": "e226278802050945b5ab44fbda56e7fafe38a79271ba09198aa24df600a2c2e0"
+}

@@ -1,0 +1,1 @@
+{"improvements":["Replaced LuxuryCard with Card primitive in DaySection","Deleted unused LuxuryCard.tsx","All components now consistently use design system primitives"]}

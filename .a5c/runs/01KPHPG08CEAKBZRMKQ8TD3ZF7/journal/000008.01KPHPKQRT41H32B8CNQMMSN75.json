@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:45:17.850Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHPKQQHNNWS40J4T6NB1XXW",
+    "invocationKey": "ui-polish-cleanup-v2:S000004:verify-build",
+    "invocationHash": "c73b4bdda32ee0a958d0b532f2dab3cb57b3970bb1f21079daadd19ee1a981de",
+    "stepId": "S000004",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build: integration",
+    "taskDefRef": "tasks/01KPHPKQQHNNWS40J4T6NB1XXW/task.json"
+  },
+  "checksum": "ab1446cc018b96ec074f289bca0a6265de7252998305e2ed9448452459476254"
+}

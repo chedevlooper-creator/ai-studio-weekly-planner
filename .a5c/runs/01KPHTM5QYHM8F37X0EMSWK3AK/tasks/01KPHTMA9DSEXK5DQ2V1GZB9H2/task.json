@@ -1,0 +1,126 @@
+{
+  "agent": {
+    "name": "planner",
+    "outputSchema": {
+      "properties": {
+        "acceptanceChecklist": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "filesToChange": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "priorities": {
+          "items": {
+            "properties": {
+              "files": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "reason",
+              "files"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary",
+        "priorities",
+        "filesToChange",
+        "acceptanceChecklist"
+      ],
+      "type": "object"
+    },
+    "prompt": {
+      "context": {
+        "focus": [
+          "small-screen layout robustness",
+          "touch target sizing and spacing",
+          "safe-area and sticky mobile actions",
+          "form usability on mobile",
+          "keyboard navigation and focus visibility",
+          "dialog semantics and focus management",
+          "landmarks, labels, and aria usage",
+          "reduced motion and readable interaction feedback"
+        ],
+        "mustReview": [
+          "package.json",
+          "src/App.tsx",
+          "src/index.css",
+          "src/components/header/AppHeader.tsx",
+          "src/components/header/MobileHeader.tsx",
+          "src/components/header/DesktopHeader.tsx",
+          "src/components/planner/FilterBar.tsx",
+          "src/components/planner/TaskRow.tsx",
+          "src/components/planner/TaskEditModal.tsx",
+          "src/components/planner/MobileBottomNav.tsx",
+          "src/components/planner/FloatingActionButton.tsx",
+          "src/components/planner/DaySection.tsx",
+          "src/components/planner/AIAssistant.tsx",
+          "src/components/ui/Modal.tsx",
+          "src/components/ui/Button.tsx",
+          "src/components/ui/Input.tsx",
+          "src/components/ui/Toast.tsx"
+        ],
+        "projectRoot": "C:/Users/isaha/Downloads/zip"
+      },
+      "instructions": [
+        "Read the listed files thoroughly before making recommendations.",
+        "Identify the highest-impact mobile UX issues in the current app.",
+        "Identify accessibility gaps affecting keyboard users, screen reader users, low-vision users, and reduced-motion users.",
+        "Stay within the existing app architecture and preserve current features.",
+        "Prefer targeted refactors over broad rewrites.",
+        "Produce a prioritized plan with concrete files to modify and expected outcomes.",
+        "Include a short acceptance checklist for the implementation and final review."
+      ],
+      "outputFormat": "JSON with summary, priorities, filesToChange, acceptanceChecklist",
+      "role": "Senior frontend architect focused on mobile UX and accessibility",
+      "task": "Audit the existing React planner app and produce a concrete implementation plan for mobile UX and accessibility refactoring"
+    }
+  },
+  "io": {
+    "inputJsonPath": "tasks/01KPHTMA9DSEXK5DQ2V1GZB9H2/input.json",
+    "outputJsonPath": "tasks/01KPHTMA9DSEXK5DQ2V1GZB9H2/output.json"
+  },
+  "kind": "agent",
+  "title": "Audit the app and create a prioritized mobile UX + accessibility refactor plan",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHTMA9DSEXK5DQ2V1GZB9H2",
+  "taskId": "audit-and-plan",
+  "invocationKey": "mobile-ux-accessibility-refactor:S000001:audit-and-plan",
+  "stepId": "S000001",
+  "inputs": {
+    "focus": [
+      "small-screen layout robustness",
+      "touch target sizing and spacing",
+      "safe-area and sticky mobile actions",
+      "form usability on mobile",
+      "keyboard navigation and focus visibility",
+      "dialog semantics and focus management",
+      "landmarks, labels, and aria usage",
+      "reduced motion and readable interaction feedback"
+    ],
+    "projectRoot": "C:/Users/isaha/Downloads/zip"
+  }
+}

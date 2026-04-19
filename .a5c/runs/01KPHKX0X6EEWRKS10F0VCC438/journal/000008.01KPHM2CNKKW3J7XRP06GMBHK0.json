@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:00:52.275Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHM2CKKF3DKWX4QZM7P143W",
+    "invocationKey": "ui-ux-pro-max:S000004:plan-arch-refactor",
+    "invocationHash": "6fb17791732dc2e900a7e45e4284d4e3c8377f7f1877d27698b54b1bc11092a8",
+    "stepId": "S000004",
+    "taskId": "plan-arch-refactor",
+    "kind": "agent",
+    "label": "Plan App.tsx monolith refactoring",
+    "taskDefRef": "tasks/01KPHM2CKKF3DKWX4QZM7P143W/task.json"
+  },
+  "checksum": "84088483e590849450b04feb78a0d7c870d25571e06e85dbe381240ea849d03d"
+}

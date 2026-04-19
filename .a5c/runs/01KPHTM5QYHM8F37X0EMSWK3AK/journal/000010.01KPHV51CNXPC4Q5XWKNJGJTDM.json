@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T03:04:39.062Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHV51BG8JZ8JJ3Y13DV4ZP7",
+    "invocationKey": "mobile-ux-accessibility-refactor:S000005:review-quality",
+    "invocationHash": "a9963cd726d23d376483e642427922ef0a0cb2f620535b7dd4efff5fdd45e47a",
+    "stepId": "S000005",
+    "taskId": "review-quality",
+    "kind": "agent",
+    "label": "Review mobile UX and accessibility quality",
+    "taskDefRef": "tasks/01KPHV51BG8JZ8JJ3Y13DV4ZP7/task.json"
+  },
+  "checksum": "d4b0b2f360afe4359ca7b6c8a0d8b75c664e7b612584f6ca1fe8cb9d0f47173c"
+}

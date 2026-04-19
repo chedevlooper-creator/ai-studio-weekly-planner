@@ -1,0 +1,16 @@
+{
+  "type": "EFFECT_REQUESTED",
+  "recordedAt": "2026-04-19T01:10:50.300Z",
+  "data": {
+    "harness": "pi",
+    "effectId": "01KPHMMMMNXGQN8JEGJZMHMVMG",
+    "invocationKey": "ui-ux-pro-max:S000014:verify-build",
+    "invocationHash": "69dfaa35f4fbaf4331e61bf3b301c2ce307cba813a0ac46ef1af17a4fe28bfdc",
+    "stepId": "S000014",
+    "taskId": "verify-build",
+    "kind": "shell",
+    "label": "Verify build: accessibility",
+    "taskDefRef": "tasks/01KPHMMMMNXGQN8JEGJZMHMVMG/task.json"
+  },
+  "checksum": "430c3c26368fffe20047fd95fe73bc27ea2438ef5bd70b4b516a6134f5b94ab7"
+}

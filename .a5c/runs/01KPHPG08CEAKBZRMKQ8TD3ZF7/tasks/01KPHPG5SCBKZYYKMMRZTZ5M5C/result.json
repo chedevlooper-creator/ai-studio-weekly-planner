@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "2026.01.results-v1",
+  "effectId": "01KPHPG5SCBKZYYKMMRZTZ5M5C",
+  "taskId": "cleanup-dead-code",
+  "invocationKey": "ui-polish-cleanup-v2:S000001:cleanup-dead-code",
+  "status": "ok",
+  "result": {
+    "cleaned": [],
+    "removed": [
+      "PerformanceSection.tsx",
+      "BottomPanels.tsx",
+      "KeyboardShortcutsOverlay.tsx",
+      "useFocusTrap.ts",
+      "useSwipe.ts",
+      "useKeyboardShortcuts.ts"
+    ]
+  },
+  "startedAt": "2026-04-19T01:43:44.198Z",
+  "finishedAt": "2026-04-19T01:43:44.198Z",
+  "value": {
+    "cleaned": [],
+    "removed": [
+      "PerformanceSection.tsx",
+      "BottomPanels.tsx",
+      "KeyboardShortcutsOverlay.tsx",
+      "useFocusTrap.ts",
+      "useSwipe.ts",
+      "useKeyboardShortcuts.ts"
+    ]
+  }
+}

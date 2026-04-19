@@ -1,0 +1,25 @@
+{
+  "filesModified": [
+    "src/App.tsx",
+    "src/index.css",
+    "src/components/planner/AIAssistant.tsx",
+    "src/components/planner/DaySection.tsx",
+    "src/components/planner/FilterBar.tsx",
+    "src/components/planner/TaskRow.tsx",
+    "src/components/ui/Button.tsx",
+    "src/components/ui/Modal.tsx"
+  ],
+  "accessibilityFixes": [
+    "Upgraded the main application container to a semantic <main> element and exposed the planner grid to the search field via aria-controls.",
+    "Added a real accessible label for the planner search input instead of relying only on placeholder text.",
+    "Improved section disclosure semantics in day columns with aria-controls and region labeling.",
+    "Made task action labels more descriptive by including task context in toggle, attachment, preview, and edit controls.",
+    "Strengthened modal accessibility by restoring focus to the previously focused element and ensuring the dialog surface itself can receive focus when needed.",
+    "Added stronger focus-visible treatment globally and for shared buttons so keyboard focus remains obvious on dark surfaces.",
+    "Gave the AI assistant dialog semantics, an accessible title reference, an explicit message input label, and Escape-key close behavior."
+  ],
+  "remainingRisks": [
+    "The AI assistant still behaves like a custom overlay rather than a fully trapped modal dialog, so a future pass could harden focus containment further if needed.",
+    "No automated screen-reader or axe test suite was added in this refactor; validation is currently based on semantic improvements plus build verification."
+  ]
+}

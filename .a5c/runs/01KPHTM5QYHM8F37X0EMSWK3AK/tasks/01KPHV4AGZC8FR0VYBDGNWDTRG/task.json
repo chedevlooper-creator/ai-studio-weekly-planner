@@ -1,0 +1,17 @@
+{
+  "command": "cd \"C:/Users/isaha/Downloads/zip\" && npm run lint && npm run build",
+  "io": {
+    "outputJsonPath": "tasks/01KPHV4AGZC8FR0VYBDGNWDTRG/output.json"
+  },
+  "kind": "shell",
+  "title": "Verify build and type safety (post-refactor)",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHV4AGZC8FR0VYBDGNWDTRG",
+  "taskId": "verify-build",
+  "invocationKey": "mobile-ux-accessibility-refactor:S000004:verify-build",
+  "stepId": "S000004",
+  "inputs": {
+    "phase": "post-refactor",
+    "projectRoot": "C:/Users/isaha/Downloads/zip"
+  }
+}

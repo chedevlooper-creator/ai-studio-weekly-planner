@@ -1,0 +1,1 @@
+{"changes":["TaskEditModal now uses Modal primitive with built-in focus trap, Escape close, backdrop blur, bottom-sheet variant on mobile"]}

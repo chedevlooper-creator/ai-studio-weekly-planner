@@ -1,0 +1,16 @@
+{
+  "command": "cd \"C:/Users/isaha/Downloads/zip\" && npx tsc --noEmit 2>&1; echo \"EXIT:$?\"",
+  "io": {
+    "outputJsonPath": "tasks/01KPHMMMMNXGQN8JEGJZMHMVMG/output.json"
+  },
+  "kind": "shell",
+  "title": "Verify build: accessibility",
+  "schemaVersion": "2026.01.tasks-v1",
+  "effectId": "01KPHMMMMNXGQN8JEGJZMHMVMG",
+  "taskId": "verify-build",
+  "invocationKey": "ui-ux-pro-max:S000014:verify-build",
+  "stepId": "S000014",
+  "inputs": {
+    "phase": "accessibility"
+  }
+}
