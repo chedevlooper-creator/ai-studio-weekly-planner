@@ -59,7 +59,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={ctx}>
       {children}
       {typeof document !== 'undefined' && createPortal(
-        <div className="fixed bottom-6 right-6 z-[300] flex flex-col gap-2 max-w-sm" aria-live="polite">
+        <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+5.25rem)] left-3 right-3 z-[300] flex flex-col gap-2 sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-sm" aria-live="polite">
           {toasts.map((t) => {
             const Icon = icons[t.type];
             return (

@@ -81,7 +81,7 @@ export const TaskRow = memo(function TaskRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group/row relative flex items-start gap-2.5 rounded-xl border bg-surface-2/40 px-3.5 py-3 sm:px-4',
+        'group/row relative flex items-start gap-3 rounded-xl border bg-surface-2/40 px-3.5 py-3 sm:px-4',
         'border-white/[0.05] transition-all duration-200',
         'hover:border-white/[0.1] hover:bg-surface-2/70 hover:shadow-[0_2px_12px_rgba(0,0,0,0.35)]',
         isDragging && 'z-50 scale-[1.025] border-accent/35 bg-accent/[0.07] shadow-[0_8px_32px_rgba(99,102,241,0.2)]',
@@ -99,7 +99,7 @@ export const TaskRow = memo(function TaskRow({
       {dragEnabled && (
         <button
           type="button"
-          className="no-print mt-0.5 shrink-0 rounded p-0.5 text-slate-700 hover:text-slate-400 cursor-grab active:cursor-grabbing touch-none select-none"
+          className="no-print mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-slate-700 cursor-grab touch-none select-none hover:bg-white/[0.05] hover:text-slate-400 active:cursor-grabbing sm:size-8 sm:rounded-lg"
           aria-label="Sürükle"
           {...attributes}
           {...listeners}
@@ -112,8 +112,8 @@ export const TaskRow = memo(function TaskRow({
       <button
         type="button"
         onClick={onToggleStatus}
-        className="mt-0.5 shrink-0 transition-all duration-200 hover:scale-110 active:scale-95"
-        aria-label={isCompleted ? 'Geri al' : task.status === 'Devam Eden' ? 'Tamamla' : 'Başlat'}
+        className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl transition-all duration-200 hover:bg-white/[0.05] hover:scale-105 active:scale-95 sm:size-8 sm:rounded-lg"
+        aria-label={isCompleted ? `${task.title} görevini bekliyor durumuna al` : task.status === 'Devam Eden' ? `${task.title} görevini tamamla` : `${task.title} görevini başlat`}
       >
         <StatusIcon className={cn('size-[18px]', statusCfg.iconClass)} />
       </button>
@@ -167,6 +167,7 @@ export const TaskRow = memo(function TaskRow({
               type="button"
               onClick={() => onPreviewAttachment(task.attachments[0])}
               className="inline-flex items-center gap-0.5 rounded border border-accent/15 bg-accent/[0.07] px-1.5 py-0.5 text-[10px] text-accent-light hover:bg-accent/[0.12] transition-colors"
+              aria-label={`${task.title} görevinin eklerini önizle`}
             >
               <Paperclip className="size-2.5" />
               {task.attachments.length}
@@ -176,8 +177,8 @@ export const TaskRow = memo(function TaskRow({
       </div>
 
       {/* Action buttons */}
-      <div className="no-print flex shrink-0 items-center gap-0.5 opacity-100 sm:opacity-0 group-hover/row:opacity-100 transition-opacity mt-0.5">
-        <label className="cursor-pointer rounded-lg p-1.5 text-slate-600 hover:bg-white/[0.07] hover:text-slate-200 transition-colors">
+      <div className="no-print mt-0.5 flex shrink-0 items-center gap-1 opacity-100 transition-opacity sm:gap-0.5 sm:opacity-0 group-hover/row:opacity-100">
+        <label className="inline-flex size-9 cursor-pointer items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-white/[0.07] hover:text-slate-200 sm:size-8 sm:rounded-lg">
           {isUploading
             ? <Loader2 className="size-3.5 animate-spin text-accent-light" />
             : <Paperclip className="size-3.5" />
@@ -186,6 +187,7 @@ export const TaskRow = memo(function TaskRow({
             type="file"
             multiple
             className="hidden"
+            aria-label={`${task.title} görevine dosya ekle`}
             onChange={async (e) => {
               const files = e.target.files;
               e.target.value = '';
@@ -198,8 +200,8 @@ export const TaskRow = memo(function TaskRow({
         <button
           type="button"
           onClick={onEditTask}
-          className="rounded-lg p-1.5 text-slate-600 hover:bg-white/[0.07] hover:text-slate-200 transition-colors"
-          aria-label="Düzenle"
+          className="inline-flex size-9 items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-white/[0.07] hover:text-slate-200 sm:size-8 sm:rounded-lg"
+          aria-label={`${task.title} görevini düzenle`}
         >
           <Pencil className="size-3.5" />
         </button>

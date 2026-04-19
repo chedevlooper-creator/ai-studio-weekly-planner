@@ -44,6 +44,8 @@ export interface OpenClawPlanBridge {
 const PROXY_API = (import.meta as any).env?.VITE_OPENCLAW_PROXY || 'http://127.0.0.1:3001';
 const HEALTH_INTERVAL_MS = 15_000;
 
+type ChatHistoryMsg = { role: 'system' | 'user' | 'assistant'; content: string };
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -112,7 +114,7 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
     messagesRef.current = messages;
   }, [messages]);
 
-  // ─── Health check ───
+  // ─── OpenClaw proxy health check ───
   useEffect(() => {
     let alive = true;
 
@@ -194,12 +196,12 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
       setIsStreaming(true);
 
       const systemPrompt = planRef.current ? buildPlanSystemMessage(planRef.current) : '';
-      const thread = [...messagesRef.current, userMsg].map((m) => ({
+      const thread: ChatHistoryMsg[] = [...messagesRef.current, userMsg].map((m) => ({
         role: m.role as 'user' | 'assistant',
         content: buildMessageContent(m.text, m.attachments),
       }));
-      const history = systemPrompt
-        ? ([{ role: 'system' as const, content: systemPrompt }, ...thread] as { role: string; content: string }[])
+      const history: ChatHistoryMsg[] = systemPrompt
+        ? [{ role: 'system', content: systemPrompt }, ...thread]
         : thread;
 
       const controller = new AbortController();
@@ -289,7 +291,7 @@ export function useOpenClaw(plan: OpenClawPlanBridge | null): UseOpenClawResult 
             text: (messagesRef.current.find((m) => m.id === assistantId)?.text || '') + '\n\n⏹ Durduruldu',
           });
         } else {
-          console.error('[OpenClaw] Hata:', err);
+          console.error('[AI] Hata:', err);
           finalizeAssistant(assistantId, {
             text: `⚠️ ${err?.message || 'Bağlantı hatası'}`,
           });

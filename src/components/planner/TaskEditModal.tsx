@@ -153,7 +153,7 @@ export function TaskEditModal({
       title={modal.mode === 'add' ? '✨ Yeni Görev' : '✏️ Görevi Düzenle'}
       variant="bottom-sheet"
     >
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 pb-[calc(env(safe-area-inset-bottom,0px)+0.25rem)]">
           {/* Day selector */}
           {modal.mode === 'add' && (
             <div>
@@ -183,7 +183,7 @@ export function TaskEditModal({
           </div>
 
           {/* Status + Priority grid */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-500">Durum</label>
               <select
@@ -305,12 +305,12 @@ export function TaskEditModal({
           </div>
 
           {/* Actions */}
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:flex-wrap">
             <Button
               type="submit"
               variant="primary"
               loading={isSaving}
-              className="flex-1 sm:flex-none"
+              className="w-full sm:w-auto sm:flex-none"
             >
               💾 Kaydet
             </Button>
@@ -318,7 +318,7 @@ export function TaskEditModal({
               type="button"
               variant="ghost"
               onClick={onClose}
-              className="flex-1 sm:flex-none"
+              className="w-full sm:w-auto sm:flex-none"
             >
               İptal
             </Button>
@@ -328,7 +328,7 @@ export function TaskEditModal({
                 variant="danger"
                 size="md"
                 onClick={() => onDelete(modal.dayIndex, modal.taskId)}
-                className="ml-auto"
+                className="w-full sm:ml-auto sm:w-auto"
               >
                 🗑️ Sil
               </Button>

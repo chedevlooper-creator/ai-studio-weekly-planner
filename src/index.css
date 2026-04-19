@@ -345,6 +345,12 @@ button, select, input, textarea {
   transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:where(a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid rgba(129, 140, 248, 0.95);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

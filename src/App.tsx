@@ -70,6 +70,7 @@ function MainApp({
   const plan = useWeeklyPlan(activeUserId);
   const toast = useToast();
   const [mobileTab, setMobileTab] = useState<MobileTab>('hafta');
+  const [isAiAssistantOpen, setIsAiAssistantOpen] = useState(false);
   const {
     data, filter, searchQuery, fileInputRef, stats, assigneeStats, syncStatus,
     expandedDays, toggleDay, setFilter, setSearchQuery, searchInputRef,
@@ -118,6 +119,15 @@ function MainApp({
   const showTeam = mobileTab === 'takim';
   const showNotes = mobileTab === 'notlar';
 
+  const handleMobileTabChange = useCallback((tab: MobileTab) => {
+    if (tab === 'ai') {
+      setIsAiAssistantOpen(true);
+      return;
+    }
+    setIsAiAssistantOpen(false);
+    setMobileTab(tab);
+  }, []);
+
   return (
     <div className="min-h-screen font-sans text-slate-100">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[500] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white">
@@ -127,7 +137,7 @@ function MainApp({
       <input ref={fileInputRef} type="file" accept="application/json,.json" className="hidden" aria-hidden
         onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImport(f); e.target.value = ''; }} />
 
-      <div id="main-content" role="main" className="mx-auto flex w-full max-w-[min(96vw,1440px)] flex-col gap-4 px-2 py-3 sm:gap-5 sm:px-4 sm:py-5 lg:px-6">
+      <main id="main-content" className="mx-auto flex w-full max-w-[min(96vw,1440px)] flex-col gap-4 px-2 py-3 pb-[calc(env(safe-area-inset-bottom,0px)+5.75rem)] sm:gap-5 sm:px-4 sm:py-5 sm:pb-5 lg:px-6">
 
         <AppHeader
           user={user} stats={stats} assigneeStats={assigneeStats} syncStatus={syncStatus}
@@ -150,7 +160,7 @@ function MainApp({
 
             <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}
               autoScroll={{ acceleration: 14, threshold: { x: 0.12, y: 0.12 } }}>
-              <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+              <div id="planner-grid" className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 2xl:grid-cols-3">
                 {data.map((dayData, dayIndex) => (
                   <Fragment key={dayData.day}>
                     <DaySection
@@ -192,17 +202,16 @@ function MainApp({
           <RemindersPanel reminders={reminders} onChange={setReminderAt} />
         </div>
 
-        <div className="h-16 sm:hidden" aria-hidden />
-      </div>
+      </main>
 
       {/* Modals */}
       <TaskEditModal modal={taskModal} days={data} task={modalTask} onClose={closeTaskModal}
         onAdd={addTaskWithFields} onUpdate={updateTaskFull} onDelete={deleteTask} ownerId={activeUserId} />
       <FilePreviewModal attachment={previewAttachment} onClose={() => setPreviewAttachment(null)} />
-      <AIAssistant planActions={plan} />
+      <AIAssistant planActions={plan} open={isAiAssistantOpen} onOpenChange={setIsAiAssistantOpen} />
 
       {/* Mobile */}
-      <MobileBottomNav activeTab={mobileTab} onTabChange={setMobileTab} />
+      <MobileBottomNav activeTab={mobileTab} aiOpen={isAiAssistantOpen} onAiOpen={() => setIsAiAssistantOpen(true)} onTabChange={handleMobileTabChange} />
       {mobileTab === 'hafta' && <FloatingActionButton onAddTask={() => openAddTask(0)} />}
     </div>
   );

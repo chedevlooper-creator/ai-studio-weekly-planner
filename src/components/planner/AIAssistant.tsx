@@ -9,6 +9,8 @@ import { cn } from '../../lib/utils';
 
 interface AIAssistantProps {
   planActions: any;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -48,9 +50,14 @@ const SUGGESTIONS = [
   '📊 Ekip performansını analiz et',
 ];
 
-export function AIAssistant({ planActions }: AIAssistantProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function AIAssistant({ planActions, open, onOpenChange }: AIAssistantProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isOpen = open ?? internalOpen;
+  const setIsOpen = useCallback((next: boolean) => {
+    setInternalOpen(next);
+    onOpenChange?.(next);
+  }, [onOpenChange]);
   const [inputMessage, setInputMessage] = useState('');
   const [pending, setPending] = useState<MessageAttachment[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -66,6 +73,24 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
     weekStart: planActions.weekStart,
     addTasksFromAiDrafts: planActions.addTasksFromAiDrafts,
   });
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const t = setTimeout(() => inputRef.current?.focus(), 30);
+    return () => clearTimeout(t);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsExpanded(false);
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, setIsOpen]);
 
   // Auto-scroll
   useEffect(() => {
@@ -135,17 +160,19 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
   if (!isOpen) {
     return (
       <button
-        onClick={() => { setIsOpen(true); setTimeout(() => inputRef.current?.focus(), 300); }}
+        onClick={() => setIsOpen(true)}
         className={cn(
           'fixed z-50 flex items-center justify-center rounded-2xl',
           'bg-gradient-to-br from-accent via-violet-600 to-violet-700 text-white',
           'shadow-[0_4px_24px_rgba(99,102,241,0.4),0_0_0_1px_rgba(255,255,255,0.08)_inset]',
           'transition-all hover:scale-105 hover:shadow-[0_6px_32px_rgba(99,102,241,0.55)] active:scale-95',
-          'bottom-20 right-4 sm:bottom-6 sm:right-6',
+          'bottom-[calc(env(safe-area-inset-bottom,0px)+5.25rem)] left-4 sm:bottom-6 sm:left-auto sm:right-6',
           // Pill shape on desktop, circle on mobile
           'size-12 sm:h-11 sm:w-auto sm:px-4 sm:gap-2 sm:rounded-xl',
         )}
         aria-label="AI Asistanı aç"
+        aria-haspopup="dialog"
+        aria-expanded="false"
       >
         <Bot className="size-5 shrink-0" />
         <span className="hidden sm:inline text-sm font-semibold">AI Asistan</span>
@@ -165,6 +192,9 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ai-assistant-title"
       className={cn(
         panelClasses,
         'flex flex-col',
@@ -186,7 +216,7 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
             <Sparkles className="size-4 text-accent-light" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white tracking-tight">AI Asistan</h3>
+            <h3 id="ai-assistant-title" className="text-sm font-bold text-white tracking-tight">AI Asistan</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className={cn('size-1.5 rounded-full', isConnected ? 'bg-emerald-400' : 'bg-rose-400')} />
               <span className="text-[10px] text-neutral-500">{isConnected ? 'Çevrimiçi' : 'Bağlanıyor…'}</span>
@@ -208,7 +238,7 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
       </div>
 
       {/* ─── Messages ─── */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3 relative">
+      <div ref={scrollContainerRef} className="relative flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4" aria-label="AI konuşması">
         {/* Empty state with suggestions */}
         {messages.length === 0 && (
           <div className="flex-1 flex flex-col items-center justify-center gap-5 py-8">
@@ -322,7 +352,7 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
       )}
 
       {/* ─── Input area ─── */}
-      <div className="border-t border-white/[0.06] shrink-0">
+      <div className="shrink-0 border-t border-white/[0.06] bg-surface-0/95 sm:bg-transparent">
         {/* Pending attachments */}
         {(pending.length > 0 || uploadError) && (
           <div className="px-3 pt-2.5 flex flex-wrap gap-1.5">
@@ -349,7 +379,7 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
         )}
 
         {/* Input form */}
-        <form onSubmit={handleSend} className="flex items-end gap-2 p-3">
+        <form onSubmit={handleSend} className="flex items-end gap-2 p-3 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] sm:pb-3">
           <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFilePick} aria-hidden />
 
           <button type="button" onClick={() => fileInputRef.current?.click()}
@@ -363,6 +393,7 @@ export function AIAssistant({ planActions }: AIAssistantProps) {
             <input
               ref={inputRef}
               type="text"
+              aria-label="AI asistana mesaj yaz"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               disabled={!isConnected}

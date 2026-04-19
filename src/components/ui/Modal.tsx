@@ -14,22 +14,29 @@ export interface ModalProps {
 export function Modal({ open, onClose, title, children, variant = 'dialog', className }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   // Focus trap
   useEffect(() => {
     if (!open) return;
     const el = contentRef.current;
     if (!el) return;
+    lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const focusable = el.querySelectorAll<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    first?.focus();
+    (first ?? el).focus();
 
     const handleTab = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key !== 'Tab') return;
+      if (focusable.length === 0) {
+        e.preventDefault();
+        el.focus();
+        return;
+      }
       if (e.shiftKey) {
         if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
       } else {
@@ -37,7 +44,10 @@ export function Modal({ open, onClose, title, children, variant = 'dialog', clas
       }
     };
     document.addEventListener('keydown', handleTab);
-    return () => document.removeEventListener('keydown', handleTab);
+    return () => {
+      document.removeEventListener('keydown', handleTab);
+      lastFocusedRef.current?.focus();
+    };
   }, [open, onClose]);
 
   // Prevent body scroll
@@ -74,6 +84,7 @@ export function Modal({ open, onClose, title, children, variant = 'dialog', clas
         )}
         onMouseDown={(e) => e.stopPropagation()}
         style={{ animation: variant === 'bottom-sheet' ? 'slideUp 0.2s ease-out' : 'scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
+        tabIndex={-1}
       >
         {variant === 'bottom-sheet' && (
           <div className="mx-auto mt-3 mb-2 h-1 w-10 rounded-full bg-white/10 sm:hidden" aria-hidden />

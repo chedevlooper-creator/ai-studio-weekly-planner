@@ -82,6 +82,7 @@ export function DaySection({
   const totalCount = dayData.tasks.length;
   const dayColor = DAY_COLORS[dayData.day] ?? { dot: 'bg-accent', accent: 'rgba(99,102,241,0.55)', text: 'text-accent-light' };
   const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const panelId = `day-panel-${dayIndex}`;
 
   return (
     <Card
@@ -98,6 +99,7 @@ export function DaySection({
         onClick={onToggleExpand}
         className="group flex w-full cursor-pointer items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-white/[0.025]"
         aria-expanded={expanded}
+        aria-controls={panelId}
       >
         <span className="flex items-center gap-2.5">
           <span className={cn('size-2 rounded-full shrink-0', dayColor.dot)} />
@@ -133,6 +135,9 @@ export function DaySection({
       {/* Tasks */}
       {expanded && (
         <div
+          id={panelId}
+          role="region"
+          aria-label={`${dayData.day} görevleri`}
           className="flex flex-col border-t border-white/[0.05] px-3 pb-3 sm:px-4 sm:pb-4"
           style={{ animation: 'fadeIn 0.2s ease-out' }}
         >
@@ -165,7 +170,7 @@ export function DaySection({
           <button
             type="button"
             onClick={onAddTask}
-            className="group mt-2.5 flex w-fit items-center gap-2 rounded-xl border border-dashed border-white/[0.08] px-3 py-2 text-[12px] font-semibold text-neutral-400 transition-all hover:border-accent/30 hover:bg-accent/[0.04] hover:text-accent-light"
+            className="group mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/[0.08] px-3 py-3 text-[12px] font-semibold text-neutral-400 transition-all hover:border-accent/30 hover:bg-accent/[0.04] hover:text-accent-light sm:w-fit sm:justify-start sm:py-2"
           >
             <Plus className="size-3.5 text-accent group-hover:rotate-90 transition-transform duration-200" />
             Görev Ekle

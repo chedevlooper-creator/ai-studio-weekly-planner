@@ -18,7 +18,7 @@ export function MobileHeader({ user, stats, syncStatus, activeUserId, onExport, 
   return (
     <div className="flex flex-col gap-3 sm:hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="relative flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-violet-600 shadow-[0_2px_10px_rgba(99,102,241,0.3)]">
             <Zap className="size-4 text-white" aria-hidden />
@@ -28,13 +28,13 @@ export function MobileHeader({ user, stats, syncStatus, activeUserId, onExport, 
             <p className="text-[10px] text-slate-500">Görev Takip</p>
           </div>
         </div>
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           <SyncStatusIndicator status={syncStatus} compact />
           <button
             type="button"
             disabled={!activeUserId}
             onClick={onExport}
-            className="rounded-lg p-2 text-slate-500 hover:bg-white/[0.07] hover:text-white disabled:opacity-40"
+            className="inline-flex size-10 items-center justify-center rounded-xl text-slate-500 hover:bg-white/[0.07] hover:text-white disabled:opacity-40"
             aria-label="Dışa Aktar"
           >
             <Download className="size-4" />
@@ -43,7 +43,7 @@ export function MobileHeader({ user, stats, syncStatus, activeUserId, onExport, 
             type="button"
             disabled={!activeUserId}
             onClick={onImport}
-            className="rounded-lg p-2 text-slate-500 hover:bg-white/[0.07] hover:text-white disabled:opacity-40"
+            className="inline-flex size-10 items-center justify-center rounded-xl text-slate-500 hover:bg-white/[0.07] hover:text-white disabled:opacity-40"
             aria-label="İçe Aktar"
           >
             <Upload className="size-4" />
@@ -52,7 +52,7 @@ export function MobileHeader({ user, stats, syncStatus, activeUserId, onExport, 
             <button
               type="button"
               onClick={onSignOut}
-              className="rounded-lg p-2 text-slate-500 hover:text-rose-400"
+              className="inline-flex size-10 items-center justify-center rounded-xl text-slate-500 hover:bg-white/[0.05] hover:text-rose-400"
               aria-label="Çıkış"
             >
               <LogOut className="size-4" />
@@ -63,15 +63,15 @@ export function MobileHeader({ user, stats, syncStatus, activeUserId, onExport, 
 
       {/* Mini stats bar */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="flex items-center justify-between rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2">
+        <div className="flex min-h-[52px] items-center justify-between rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2.5">
           <span className="text-[10px] text-slate-500">Toplam</span>
           <span className="text-sm font-bold text-white tabular-nums">{stats.totalTasks}</span>
         </div>
-        <div className="flex items-center justify-between rounded-lg border border-emerald-500/15 bg-emerald-500/[0.06] px-3 py-2">
+        <div className="flex min-h-[52px] items-center justify-between rounded-lg border border-emerald-500/15 bg-emerald-500/[0.06] px-3 py-2.5">
           <CheckCircle2 className="size-3 text-emerald-400 shrink-0" />
           <span className="text-sm font-bold text-emerald-400 tabular-nums">{stats.completed}</span>
         </div>
-        <div className="flex flex-col gap-1 rounded-lg border border-accent/15 bg-accent/[0.06] px-3 py-2">
+        <div className="flex min-h-[52px] flex-col justify-center gap-1 rounded-lg border border-accent/15 bg-accent/[0.06] px-3 py-2.5">
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-accent-light/60">Oran</span>
             <span className="text-xs font-bold text-accent-light tabular-nums">%{stats.completionRate}</span>
