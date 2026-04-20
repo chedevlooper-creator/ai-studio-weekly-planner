@@ -3,22 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { X, Download, FileText, Image as ImageIcon, FileSpreadsheet, File, Code } from 'lucide-react';
+import { X, Download, FileText, Image as ImageIcon, FileSpreadsheet, File } from 'lucide-react';
 import { useEffect } from 'react';
 import type { TaskAttachment } from '../../types/plan';
-import type { MessageAttachment } from '../../hooks/useOpenClaw';
-import { TEXTUAL_MIME } from '../../lib/utils';
-
-/** Accepts either a persisted TaskAttachment (url-based) or a session-only MessageAttachment (dataUrl-based). */
-type PreviewableAttachment =
-  | TaskAttachment
-  | (MessageAttachment & { __chat?: true });
 
 export function FilePreviewModal({
   attachment,
   onClose,
 }: {
-  attachment: PreviewableAttachment | null;
+  attachment: TaskAttachment | null;
   onClose: () => void;
 }) {
   useEffect(() => {
@@ -32,39 +25,29 @@ export function FilePreviewModal({
 
   if (!attachment) return null;
 
-  const url = ('url' in attachment ? attachment.url : undefined) || attachment.dataUrl;
-  const hasTextPreview = 'textPreview' in attachment && typeof attachment.textPreview === 'string' && attachment.textPreview.length > 0;
-  if (!url && !hasTextPreview) return null;
+  const url = attachment.url || attachment.dataUrl;
+  if (!url) return null;
 
   const isPdf = attachment.mimeType === 'application/pdf' || attachment.name.endsWith('.pdf');
   const isImage = attachment.mimeType.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.name);
   const isExcel = attachment.mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || attachment.mimeType === 'application/vnd.ms-excel' || /\.(xls|xlsx)$/i.test(attachment.name);
 
   // Office Web Viewer sadece public URL'ler ile çalışır, base64 data URL'ler ile çalışmaz.
-  const isPublicUrl = url ? url.startsWith('http://') || url.startsWith('https://') : false;
-  const isTextual = hasTextPreview || TEXTUAL_MIME.test(attachment.mimeType);
+  const isPublicUrl = url.startsWith('http://') || url.startsWith('https://');
 
   let content = null;
   let Icon = FileText;
 
-  if (isImage && url) {
+  if (isImage) {
     Icon = ImageIcon;
     content = <img src={url} alt={attachment.name} className="max-w-full max-h-full object-contain mx-auto" />;
-  } else if (isPdf && url) {
+  } else if (isPdf) {
     Icon = FileText;
     content = <iframe src={url} className="w-full h-full rounded-lg bg-white" title={attachment.name} />;
   } else if (isExcel && isPublicUrl) {
     Icon = FileSpreadsheet;
-    const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url!)}`;
+    const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`;
     content = <iframe src={viewerUrl} className="w-full h-full rounded-lg bg-white" title={attachment.name} />;
-  } else if (isTextual && hasTextPreview) {
-    Icon = Code;
-    const textContent = (attachment as MessageAttachment).textPreview!;
-    content = (
-      <div className="w-full h-full overflow-auto p-4">
-        <pre className="whitespace-pre-wrap break-words text-sm text-zinc-200 font-mono leading-relaxed bg-black/30 rounded-xl p-4 border border-white/[0.06]">{textContent}</pre>
-      </div>
-    );
   } else {
     Icon = isExcel ? FileSpreadsheet : File;
     content = (
@@ -75,14 +58,12 @@ export function FilePreviewModal({
         <div className="text-sm text-zinc-400 max-w-sm">
           Bu dosya türü için tarayıcıda doğrudan önizleme desteklenmiyor veya dosya yerel diskte (misafir modu).
           <br /><br />
-          {url ? 'Lütfen dosyayı indirerek cihazınızda görüntüleyin.' : 'Bu dosyanın indirme bağlantısı mevcut değil.'}
+          Lütfen dosyayı indirerek cihazınızda görüntüleyin.
         </div>
-        {url && (
-          <a href={url} download={attachment.name} className="btn-primary mt-2">
-            <Download className="size-4" />
-            Dosyayı İndir
-          </a>
-        )}
+        <a href={url} download={attachment.name} className="btn-primary mt-2">
+          <Download className="size-4" />
+          Dosyayı İndir
+        </a>
       </div>
     );
   }
@@ -108,11 +89,9 @@ export function FilePreviewModal({
             <h3 className="text-sm font-bold text-white truncate" title={attachment.name}>{attachment.name}</h3>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            {url && (
-              <a href={url} download={attachment.name} className="rounded-lg p-2 text-zinc-400 hover:bg-white/[0.08] hover:text-white transition-colors" title="İndir">
-                <Download className="size-4.5" />
-              </a>
-            )}
+            <a href={url} download={attachment.name} className="rounded-lg p-2 text-zinc-400 hover:bg-white/[0.08] hover:text-white transition-colors" title="İndir">
+              <Download className="size-4.5" />
+            </a>
             <button type="button" onClick={onClose} className="rounded-lg p-2 text-zinc-400 hover:bg-rose-500/20 hover:text-rose-400 transition-colors" title="Kapat">
               <X className="size-4.5" />
             </button>

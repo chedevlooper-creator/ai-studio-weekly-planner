@@ -151,7 +151,7 @@ Available languages:
 | Dev server | `npm run dev` (port 5173) |
 | Build | `npm run build` |
 | Typecheck | `npm run lint:app` (runs `tsc --noEmit`) |
-| Full lint | `npm run lint` (typechecks app + `openclaw-proxy`) |
+| Full lint | `npm run lint` (typechecks app) |
 
 There are **no test scripts** configured.
 
@@ -172,10 +172,9 @@ Copy `.env.example` to `.env.local`. Vite exposes vars prefixed `VITE_`:
 - `src/components/` — React UI components
 - `src/hooks/` — custom hooks (theme, etc.)
 - `src/data/`, `src/types/` — data helpers and type definitions
-- `vite.config.ts` proxies `/openclaw-api` to `localhost:18789`; HMR can be disabled via `DISABLE_HMR=true`
+- HMR can be disabled via `DISABLE_HMR=true`
 
 ## Gotchas
 
 - `tsconfig.json` has `noUncheckedIndexedAccess: true` — handle `undefined` on all index accesses
-- `openclaw-proxy/` is excluded from TS compilation but has its own typecheck via `npm run lint:proxy`
 - Vite config uses manual chunks for `@dnd-kit`, `@insforge/sdk`, and `lucide-react` — update if adding large deps

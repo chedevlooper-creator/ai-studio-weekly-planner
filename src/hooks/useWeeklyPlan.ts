@@ -11,8 +11,7 @@ import { getInsforgeClient } from '../lib/insforgeClient';
 import { subscribePlanChannel, type PlanRealtimeHandle } from '../lib/insforgeRealtime';
 import { MAX_TASK_FILE_SIZE, TASK_FILES_BUCKET, uploadTaskFile } from '../lib/insforgeStorage';
 import { buildExportPayload, newTaskId, parseImportedJson } from '../lib/planSnapshot';
-import type { Assignee, DayTasks, PlanSnapshot, Priority, Status, Task, TaskAttachment } from '../types/plan';
-import type { AiTaskDraft } from '../lib/aiTaskDrafts';
+import type { DayTasks, PlanSnapshot, Priority, Status, Task, TaskAttachment } from '../types/plan';
 import { PLAN_EXPORT_VERSION } from '../types/plan';
 
 export type TaskModalState =
@@ -62,17 +61,6 @@ function assigneeStatsFrom(days: DayTasks[]) {
     });
     return { member, assigned, done };
   });
-}
-
-function resolveAssignees(names: string[] | undefined): Assignee[] {
-  if (!names?.length) return [...TEAM];
-  const out: Assignee[] = [];
-  for (const n of names) {
-    const trimmed = n.trim();
-    const m = TEAM.find((t) => t.name.localeCompare(trimmed, 'tr', { sensitivity: 'base' }) === 0);
-    if (m) out.push(m);
-  }
-  return out.length ? out : [...TEAM];
 }
 
 export function useWeeklyPlan(userId: string | null) {
@@ -374,33 +362,6 @@ export function useWeeklyPlan(userId: string | null) {
     [userId]
   );
 
-  const addTasksFromAiDrafts = useCallback((drafts: AiTaskDraft[]): { added: number; skipped: number } => {
-    if (!drafts.length) return { added: 0, skipped: 0 };
-    let added = 0;
-    let skipped = 0;
-    setData((prev) => {
-      const next = prev.map((d) => ({ ...d, tasks: [...d.tasks] }));
-      for (const draft of drafts) {
-        const dayIdx = next.findIndex((x) => x.day === draft.day);
-        if (dayIdx < 0) { skipped++; continue; }
-        const assignees = resolveAssignees(draft.assigneeNames);
-        const task: Task = {
-          id: newTaskId(),
-          title: draft.title,
-          priority: draft.priority === 'Orta' ? 'Orta' : 'Yüksek',
-          status: draft.status ?? 'Bekliyor',
-          assignees,
-          notes: '',
-          attachments: [],
-        };
-        next[dayIdx]!.tasks.push(task);
-        added++;
-      }
-      return next;
-    });
-    return { added, skipped };
-  }, []);
-
   return {
     data,
     expandedDays,
@@ -432,6 +393,5 @@ export function useWeeklyPlan(userId: string | null) {
     exportJson,
     importFromFile,
     quickAttachFiles,
-    addTasksFromAiDrafts,
   };
 }

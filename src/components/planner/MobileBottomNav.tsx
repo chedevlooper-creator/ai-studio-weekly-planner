@@ -1,24 +1,21 @@
-import { useState, type ReactNode } from 'react';
-import { Calendar, Users, Bot, FileText } from 'lucide-react';
+import { type ReactNode } from 'react';
+import { Calendar, Users, FileText } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-export type MobileTab = 'hafta' | 'takim' | 'ai' | 'notlar';
+export type MobileTab = 'hafta' | 'takim' | 'notlar';
 
 interface MobileBottomNavProps {
   activeTab: MobileTab;
-  aiOpen?: boolean;
-  onAiOpen?: () => void;
   onTabChange: (tab: MobileTab) => void;
 }
 
 const tabs: { id: MobileTab; label: string; icon: ReactNode }[] = [
   { id: 'hafta', label: 'Hafta', icon: <Calendar className="size-[18px]" /> },
   { id: 'takim', label: 'Takım', icon: <Users className="size-[18px]" /> },
-  { id: 'ai', label: 'AI', icon: <Bot className="size-[18px]" /> },
   { id: 'notlar', label: 'Notlar', icon: <FileText className="size-[18px]" /> },
 ];
 
-export function MobileBottomNav({ activeTab, aiOpen = false, onAiOpen, onTabChange }: MobileBottomNavProps) {
+export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-[40] border-t border-white/[0.07] bg-surface-0/95 backdrop-blur-2xl sm:hidden"
@@ -27,13 +24,12 @@ export function MobileBottomNav({ activeTab, aiOpen = false, onAiOpen, onTabChan
     >
       <div className="flex items-stretch px-1.5 pt-1.5">
         {tabs.map((tab) => {
-          const isAiTab = tab.id === 'ai';
-          const isActive = isAiTab ? aiOpen : activeTab === tab.id;
+          const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
-              onClick={() => (isAiTab ? onAiOpen?.() : onTabChange(tab.id))}
+              onClick={() => onTabChange(tab.id)}
               className={cn(
                 'relative flex min-h-[56px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-2.5 text-[10px] font-semibold transition-all',
                 isActive
@@ -41,8 +37,7 @@ export function MobileBottomNav({ activeTab, aiOpen = false, onAiOpen, onTabChan
                   : 'text-zinc-600 hover:text-zinc-400',
               )}
               aria-label={tab.label}
-              aria-current={!isAiTab && isActive ? 'page' : undefined}
-              aria-pressed={isAiTab ? isActive : undefined}
+              aria-current={isActive ? 'page' : undefined}
             >
               {isActive && (
                 <span className="absolute top-0 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-gradient-to-r from-accent to-violet-500" />
