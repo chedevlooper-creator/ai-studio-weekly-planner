@@ -31,7 +31,6 @@
   ],
   "exclude": [
     "dist",
-    "node_modules",
-    "openclaw-proxy"
+    "node_modules"
   ]
 }

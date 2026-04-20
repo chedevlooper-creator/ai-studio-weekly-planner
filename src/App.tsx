@@ -27,7 +27,6 @@ import { MobileBottomNav, type MobileTab } from './components/planner/MobileBott
 // Lazy-loaded components for code splitting
 const TaskEditModal = lazy(() => import('./components/planner/TaskEditModal').then(m => ({ default: m.TaskEditModal })));
 const FilePreviewModal = lazy(() => import('./components/planner/FilePreviewModal').then(m => ({ default: m.FilePreviewModal })));
-const AIAssistant = lazy(() => import('./components/planner/AIAssistant').then(m => ({ default: m.AIAssistant })));
 const TeamPanel = lazy(() => import('./components/planner/TeamPanel').then(m => ({ default: m.TeamPanel })));
 const RemindersPanel = lazy(() => import('./components/planner/RemindersPanel').then(m => ({ default: m.RemindersPanel })));
 import { useWeeklyPlan } from './hooks/useWeeklyPlan';
@@ -75,7 +74,6 @@ function MainApp({
   const plan = useWeeklyPlan(activeUserId);
   const toast = useToast();
   const [mobileTab, setMobileTab] = useState<MobileTab>('hafta');
-  const [isAiAssistantOpen, setIsAiAssistantOpen] = useState(false);
   const {
     data, filter, searchQuery, fileInputRef, stats, assigneeStats, syncStatus,
     expandedDays, toggleDay, setFilter, setSearchQuery, searchInputRef,
@@ -84,16 +82,6 @@ function MainApp({
     toggleTaskStatus, deleteTask, addTaskWithFields,
     moveOrReorderTask, updateTaskFull, exportJson, importFromFile, quickAttachFiles,
   } = plan;
-
-  const aiPlanActions = {
-    ...plan,
-    addTasksFromAiDrafts: (drafts: Parameters<typeof plan.addTasksFromAiDrafts>[0]) => {
-      const result = plan.addTasksFromAiDrafts(drafts);
-      if (result.added > 0) toast.success(`${result.added} görev eklendi.`);
-      if (result.skipped > 0) toast.warning(`${result.skipped} görev atlandı.`);
-      return result;
-    },
-  };
 
   const dragEnabled = filter === 'Tümü' && !searchQuery.trim();
   const sensors = useSensors(
@@ -135,11 +123,6 @@ function MainApp({
   const showNotes = mobileTab === 'notlar';
 
   const handleMobileTabChange = useCallback((tab: MobileTab) => {
-    if (tab === 'ai') {
-      setIsAiAssistantOpen(true);
-      return;
-    }
-    setIsAiAssistantOpen(false);
     setMobileTab(tab);
   }, []);
 
@@ -239,14 +222,9 @@ function MainApp({
           {previewAttachment && <FilePreviewModal attachment={previewAttachment} onClose={() => setPreviewAttachment(null)} />}
         </Suspense>
       </ErrorBoundary>
-      <ErrorBoundary>
-        <Suspense fallback={null}>
-          <AIAssistant planActions={aiPlanActions} open={isAiAssistantOpen} onOpenChange={setIsAiAssistantOpen} />
-        </Suspense>
-      </ErrorBoundary>
 
       {/* Mobile */}
-      <MobileBottomNav activeTab={mobileTab} aiOpen={isAiAssistantOpen} onAiOpen={() => setIsAiAssistantOpen(true)} onTabChange={handleMobileTabChange} />
+      <MobileBottomNav activeTab={mobileTab} onTabChange={handleMobileTabChange} />
       {mobileTab === 'hafta' && <FloatingActionButton onAddTask={() => openAddTask(0)} />}
     </div>
   );

@@ -15,11 +15,10 @@ View your app in AI Studio: https://ai.studio/apps/159de442-333a-482a-8a26-b13e0
 
 1. Install dependencies:
    `npm install`
-2. Add InsForge variables to `.env.local` (aynı bağlantı uzaktan plan senkronu ve **InsForge AI Gateway** ile metin→görev için kullanılır):
+2. Add InsForge variables to `.env.local` (uzaktan plan senkronu için):
    - `VITE_INSFORGE_BASE_URL`
    - `VITE_INSFORGE_ANON_KEY`
-3. (Optional) Set `VITE_INSFORGE_AI_MODEL` to a chat model from your project (`npx @insforge/cli metadata --json` → `aiIntegration.models`). Defaults to `openai/gpt-4o-mini` if unset.
-4. Ensure backend table exists (user-based plan storage):
+3. Ensure backend table exists (user-based plan storage):
    ```sql
    create table if not exists public.weekly_plans (
      user_id text primary key,
@@ -27,9 +26,9 @@ View your app in AI Studio: https://ai.studio/apps/159de442-333a-482a-8a26-b13e0
      updated_at timestamptz not null default now()
    );
    ```
-5. Ensure storage bucket exists for task attachments:
+4. Ensure storage bucket exists for task attachments:
    - Bucket name: `task-files`
    - Visibility: public
-6. Use the built-in auth panel in the app to sign up/sign in, or continue with guest mode.
-7. Run the app:
+5. Use the built-in auth panel in the app to sign up/sign in, or continue with guest mode.
+6. Run the app:
    `npm run dev`

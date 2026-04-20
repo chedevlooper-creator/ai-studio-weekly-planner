@@ -12,8 +12,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint:app": "node ./node_modules/typescript/lib/tsc.js --noEmit",
-    "lint:proxy": "npm --prefix openclaw-proxy run typecheck",
-    "lint": "npm run lint:app && npm run lint:proxy"
+    "lint": "npm run lint:app"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
