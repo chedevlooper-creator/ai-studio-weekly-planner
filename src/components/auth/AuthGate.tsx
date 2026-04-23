@@ -6,6 +6,9 @@ interface AuthGateProps {
   children: (params: {
     user: ReturnType<typeof useInsforgeAuth>['user'];
     auth: ReturnType<typeof useInsforgeAuth>;
+    /** InsForge user id only; null in guest mode (no remote plan sync). */
+    syncUserId: string | null;
+    /** Auth id or stable guest id — export/import, attachments, display. */
     activeUserId: string | null;
   }) => React.ReactNode;
   onGuestMode: () => void;
@@ -20,9 +23,9 @@ export function AuthGate({ children, onGuestMode, guestMode, guestId }: AuthGate
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
 
-  // Only authenticated users should sync remotely/realtime.
-  // Guest mode stays local-only to avoid unauthorized realtime/auth requests.
-  const activeUserId = auth.user?.id ?? null;
+  // Only authenticated users sync to InsForge; guests use local storage only.
+  const syncUserId = auth.user?.id ?? null;
+  const activeUserId = auth.user?.id ?? (guestMode ? guestId : null);
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,5 +123,5 @@ export function AuthGate({ children, onGuestMode, guestMode, guestId }: AuthGate
     );
   }
 
-  return <>{children({ user: auth.user, auth, activeUserId })}</>;
+  return <>{children({ user: auth.user, auth, syncUserId, activeUserId })}</>;
 }
