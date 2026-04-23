@@ -51,9 +51,9 @@ export default function App() {
 
   return (
     <AuthGate guestMode={guestMode} guestId={guestId} onGuestMode={() => setGuestMode(true)}>
-      {({ user, auth, activeUserId }) => (
+      {({ user, auth, syncUserId, activeUserId }) => (
         <MainApp
-          user={user} auth={auth} activeUserId={activeUserId} guestMode={guestMode}
+          user={user} auth={auth} syncUserId={syncUserId} activeUserId={activeUserId} guestMode={guestMode}
           previewAttachment={previewAttachment} setPreviewAttachment={setPreviewAttachment}
         />
       )}
@@ -62,16 +62,17 @@ export default function App() {
 }
 
 function MainApp({
-  user, auth, activeUserId, guestMode, previewAttachment, setPreviewAttachment,
+  user, auth, syncUserId, activeUserId, guestMode, previewAttachment, setPreviewAttachment,
 }: {
   user: { id?: string; email?: string } | null;
   auth: { user: AuthUser | null; signOut: () => Promise<void> };
+  syncUserId: string | null;
   activeUserId: string | null;
   guestMode: boolean;
   previewAttachment: TaskAttachment | null;
   setPreviewAttachment: (a: TaskAttachment | null) => void;
 }) {
-  const plan = useWeeklyPlan(activeUserId);
+  const plan = useWeeklyPlan(syncUserId);
   const toast = useToast();
   const [mobileTab, setMobileTab] = useState<MobileTab>('hafta');
   const {
